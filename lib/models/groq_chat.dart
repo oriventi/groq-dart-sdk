@@ -56,7 +56,7 @@ class GroqChatSettings {
     this.temperature = 1.0,
     this.maxTokens = 8192,
     this.topP = 1.0,
-    this.stop = null,
+    this.stop,
     this.maxConversationalMemoryLength = 1024,
   }) {
     assert(temperature >= 0.0 && temperature <= 2.0,
