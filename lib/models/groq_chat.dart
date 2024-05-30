@@ -51,13 +51,13 @@ class GroqChatSettings {
   ///[stop] a stop sequence is a predefined or user-specified text string that signals an AI to stop generating content. \
   ///[maxConversationalMemoryLength] conversational memory length. The number of previous messages to include in the model's context. A higher value will result in more context-aware responses. Default: 1024 \
   ///Throws an assertion error if the temperature is not between 0.0 and 2.0, maxTokens is less than or equal to 0, topP is not between 0.0 and 1.0, or choicesCount is less than or equal to 0.
-  ///Default values: temperature: 1.0, maxTokens: 8192, topP: 1.0, stream: false, choicesCount: 1, stop: null
+  ///Default values: temperature: 1.0, maxTokens: 8192, topP: 1.0, stream: false, choicesCount: 1, stop: null, maxConversationalMemoryLength: 1024
   GroqChatSettings({
-    required this.temperature,
-    required this.maxTokens,
-    required this.topP,
-    required this.stop,
-    required this.maxConversationalMemoryLength,
+    this.temperature = 1.0,
+    this.maxTokens = 8192,
+    this.topP = 1.0,
+    this.stop = null,
+    this.maxConversationalMemoryLength = 1024,
   }) {
     assert(temperature >= 0.0 && temperature <= 2.0,
         'Temperature must be between 0.0 and 2.0');

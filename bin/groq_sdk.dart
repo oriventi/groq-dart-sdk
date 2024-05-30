@@ -1,7 +1,4 @@
 import 'package:groq_sdk/groq_sdk.dart';
-import 'package:groq_sdk/models/groq.dart';
-import 'package:groq_sdk/models/groq_chat.dart';
-import 'package:groq_sdk/models/groq_llm_model.dart';
 
 void main(List<String> arguments) async {
   final groq = Groq('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');
