@@ -10,6 +10,8 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
 - **Resource Usage Tracking:** Get detailed insights into token usage and request/response times.
 - **Rate Limit Information:** Stay informed about your Groq API usage limits.
 - **Future-proof:** Easily support new Groq models as they become available.
+- **Audio Transcription:** Transcribe audio files into text using Groq's powerful Whisper models.
+- **Audio Translation:** Translate audio files directly into english.
 
 ## Getting Started
 1. Obtain a Groq API Key:
@@ -90,6 +92,22 @@ Calculates the cumulative token usage for all requests and responses within the 
 final totalTokensUsed = chat.totalTokens;
 print('Total tokens used in this chat: $totalTokensUsed');
 ```
+
+### Audio Transcription
+Transcribe audio files using Groq's supported `whisper-large-v3` model (or other available models). Replace `'./path/to/your/audio.mp3'` with the actual path to your audio file.
+```dart
+final groq = Groq('YOUR_GROQ_API_KEY');
+
+try {
+  final (transcriptionResult, usage, rateLimitInformation) = await groq.transcribeAudio(
+    filePath: './path/to/your/audio.mp3', // Adjust file path as needed
+  );
+  print(transcriptionResult.text); // The transcribed text
+} on GroqException catch (e) {
+  print('Error transcribing audio: $e');
+}
+```
+
 
 ## Constants
 Instead of looking up the standard models, you can use the ids via provided constants:
