@@ -21,7 +21,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
     - Add `groq_sdk` to your `pubspec.yaml` file:
         ```yaml
         dependencies:
-            groq_sdk: ^0.0.1 # add the latest version here
+            groq_sdk: ^0.0.4 # add the latest version here
         ```
     - Run `dart pub get`.
 
