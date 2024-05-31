@@ -1,12 +1,21 @@
 class GroqUsage {
+  ///The number of tokens used in the prompt
   final int promptTokens;
+
+  ///The number of tokens used in the completion
   final int completionTokens;
+
+  ///The time taken in the prompt
   final Duration promptTime;
+
+  ///The time taken in the completion
   final Duration completionTime;
 
   ///The usage of the groq resources \
   ///It contains the number of tokens used in the prompt and completion \
-  ///It also contains the time taken in the prompt and completion
+  ///It also contains the time taken in the prompt and completion \
+  ///It is used for chats and audio responses \
+  ///Audio responses just have a completion time, prompt tokens and completion tokens
   GroqUsage({
     required this.promptTokens,
     required this.completionTokens,
@@ -19,16 +28,4 @@ class GroqUsage {
 
   ///Returns the total time taken in the prompt and completion
   Duration get totalTime => promptTime + completionTime;
-
-  factory GroqUsage.fromJson(Map<String, dynamic> json) {
-    return GroqUsage(
-      promptTokens: json['prompt_tokens'] as int,
-      completionTokens: json['completion_tokens'] as int,
-      // it is stored in json as 0.001 seconds e.g.
-      promptTime: Duration(
-          milliseconds: ((json['prompt_time'] as double) * 1000).toInt()),
-      completionTime: Duration(
-          milliseconds: ((json['completion_time'] as double) * 1000).toInt()),
-    );
-  }
 }

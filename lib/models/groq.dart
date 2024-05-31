@@ -1,6 +1,9 @@
 import 'package:groq_sdk/models/groq_api.dart';
+import 'package:groq_sdk/models/groq_audio_response.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
+import 'package:groq_sdk/models/groq_rate_limit_information.dart';
+import 'package:groq_sdk/models/groq_usage.dart';
 
 class Groq {
   ///The API key to use the Groq API \
@@ -19,12 +22,12 @@ class Groq {
   ///```
   Groq(this.apiKey);
 
-  ///Returns the model metadata from groq with the given model id
+  ///Returns the model metadata from groq with the given model id \
   Future<GroqLLMModel> getModel(String modelId) async {
     return await GroqApi.getModel(modelId, apiKey);
   }
 
-  ///Returns a list of all model metadatas available in Groq
+  ///Returns a list of all model metadatas available in Groq \
   Future<List<GroqLLMModel>> listModels() async {
     return await GroqApi.listModels(apiKey);
   }
@@ -73,5 +76,63 @@ class Groq {
   }) {
     final specificApiKey = customApiKey ?? apiKey;
     return GroqChat(modelId, specificApiKey, settings);
+  }
+
+  ///Transcribes the audio file at the given `audioFileUrl`, max 25Mb \
+  ///It uses the model with the given `modelId` \
+  ///`customApiKey` is the API key to use for the transcription, defaults to the Groq instance API key \
+  ///Returns the transcribed audio response, the usage of the groq resources and the rate limit information \
+  ///Example:
+  ///```dart
+  ///final (response, usage, rateLimit) = await groq.transcribeAudio(
+  ///  audioFileUrl: 'YOUR_DIRECTORY/audio.mp3',
+  ///  modelId: whisper_large_v3,
+  ///  customApiKey: 'EXAMPLE_API_KEY',
+  ///);
+  ///```
+  ///Supported file formats: mp3, mp4, mpeg, mpga, m4a, wav, and webm. \
+  Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
+      transcribeAudio({
+    required String audioFileUrl,
+    required String modelId,
+    String? customApiKey,
+  }) async {
+    final specificApiKey = customApiKey ?? apiKey;
+    return await GroqApi.transcribeAudio(
+      filePath: audioFileUrl,
+      modelId: modelId,
+      apiKey: specificApiKey,
+    );
+  }
+
+  ///Translates the audio file at the given `audioFileUrl` to ENGLISH, max 25Mb \
+  ///It uses the model with the given `modelId` \
+  ///`customApiKey` is the API key to use for the translation, defaults to the Groq instance API key \
+  ///`temperature` is the randomness of the translation, defaults to 0.5 \
+  ///Returns the translated audio response, the usage of the groq resources and the rate limit information \
+  ///Example:
+  ///```dart
+  ///final (response, usage, rateLimit) = await groq.translateAudio(
+  ///  audioFileUrl: 'YOUR_DIRECTORY/audio.mp3',
+  ///  modelId: whisper_large_v3,
+  ///  customApiKey: 'EXAMPLE_API_KEY',
+  ///  temperature: 0.4,
+  ///);
+  ///```
+  ///Supported file formats: mp3, mp4, mpeg, mpga, m4a, wav, and webm. \
+  Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
+      translateAudio({
+    required String audioFileUrl,
+    required String modelId,
+    String? customApiKey,
+    double temperature = 0.5,
+  }) async {
+    final specificApiKey = customApiKey ?? apiKey;
+    return await GroqApi.translateAudio(
+      filePath: audioFileUrl,
+      modelId: modelId,
+      apiKey: specificApiKey,
+      temperature: temperature,
+    );
   }
 }

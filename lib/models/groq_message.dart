@@ -41,26 +41,6 @@ class GroqMessage {
     this.username,
   });
 
-  factory GroqMessage.fromJson(Map<String, dynamic> json) {
-    return GroqMessage(
-      content: json['content'] as String,
-      username: json['user'] as String?,
-      role: GroqMessageRoleParser.tryParse(json['role'] as String) ??
-          GroqMessageRole.user,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final jsonMap = {
-      'content': content,
-      'role': GroqMessageRoleParser.toId(role),
-    };
-    if (username != null) {
-      jsonMap['user'] = username!;
-    }
-    return jsonMap;
-  }
-
   @override
   String toString() {
     return 'GroqMessage{content: $content, username: $username, role: $role}';

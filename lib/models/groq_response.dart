@@ -19,6 +19,9 @@ class GroqChoice {
   ///```
   final String? finishReason;
 
+  ///Creates a GroqChoice with the given messageData and finishReason \
+  ///The messageData is the message of the choice \
+  ///The finishReason is the reason why the conversation ended \
   GroqChoice({
     required this.messageData,
     required this.finishReason,
@@ -32,13 +35,6 @@ class GroqChoice {
   ///print(choice.message); //prints the message of the choice
   ///```
   String get message => messageData.content;
-
-  factory GroqChoice.fromJson(Map<String, dynamic> json) {
-    return GroqChoice(
-      messageData: GroqMessage.fromJson(json["message"]),
-      finishReason: json['finish_reason'] as String?,
-    );
-  }
 }
 
 class GroqResponse {
@@ -61,17 +57,4 @@ class GroqResponse {
     required this.choices,
     required this.createdAt,
   });
-
-  factory GroqResponse.fromJson(Map<String, dynamic> json) {
-    return GroqResponse(
-      id: json['id'] as String,
-      choices: (json['choices'] as List)
-          .map(
-            (item) => GroqChoice.fromJson(item as Map<String, dynamic>),
-          )
-          .toList(),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['created'] as int,
-          isUtc: true),
-    );
-  }
 }

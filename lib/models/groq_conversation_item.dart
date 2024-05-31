@@ -13,14 +13,4 @@ class GroqConversationItem {
   String get model => _model;
 
   GroqMessage get request => _request;
-
-  void setResponse(GroqResponse response, GroqUsage usage) {
-    this.response = response;
-    this.usage = usage;
-  }
-
-  void setResponseFromJson(Map<String, dynamic> json) {
-    response = GroqResponse.fromJson(json);
-    usage = GroqUsage.fromJson(json);
-  }
 }

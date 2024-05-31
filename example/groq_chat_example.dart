@@ -1,7 +1,7 @@
 import 'package:groq_sdk/groq_sdk.dart';
 
 void main(List<String> arguments) async {
-  final groq = Groq('YOUR_GROQ_API_KEY');
+  final groq = Groq('YOUR_API_KEY');
 
   //Checking model availability
   if (!await groq.canUseModel(llama3_8b)) {

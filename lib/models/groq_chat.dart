@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:groq_sdk/extensions/groq_json_extensions.dart';
 import 'package:groq_sdk/models/chat_event.dart';
 import 'package:groq_sdk/models/groq_api.dart';
 import 'package:groq_sdk/models/groq_conversation_item.dart';
@@ -107,18 +108,6 @@ class GroqChatSettings {
       maxConversationalMemoryLength:
           maxConversationalMemoryLength ?? this.maxConversationalMemoryLength,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'temperature': temperature,
-      'max_tokens': maxTokens,
-      'top_p': topP,
-      // 'unknown': choicesCount,
-      // 'stream': stream,
-      'stop': stop,
-      // max conversational memory length is not included in the json, it is a local setting
-    };
   }
 }
 

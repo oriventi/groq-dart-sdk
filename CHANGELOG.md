@@ -1,3 +1,8 @@
+## 0.0.4
+
+- added support for translations and transcriptions with audio models
+- made toJson and fromJson functions private
+
 ## 0.0.3
 
 - changed dart sdk version range in pubspec.yaml

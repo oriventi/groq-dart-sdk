@@ -30,6 +30,8 @@ This initiates a new chat session with the specified model, optionally customizi
 ```dart
 final groq = Groq('YOUR_GROQ_API_KEY');
 //Start a chat with default settings
+if(!await groq.canUseModel(llama3_8b)) return;
+
 final chat = groq.startNewChat(llama3_8b);
 
 //Start a chat with custom settings
@@ -96,6 +98,7 @@ const String mixtral8_7b = 'mixtral-8x7b-32768';
 const String gemma_7b = 'gemma-7b-it';
 const String llama3_8b = 'llama3-8b-8192';
 const String llama3_70b = 'llama3-70b-8192';
+const String whisper_large_v3 = 'whisper-large-v3';
 ```
 You can use these constants directly when starting a new chat or switching models:
 ```dart

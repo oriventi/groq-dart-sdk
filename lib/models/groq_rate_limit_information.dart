@@ -19,20 +19,6 @@ class GroqRateLimitInformation {
     required this.remainingTokensThisMinute,
   });
 
-  ///Creates a GroqRateLimitInformation from the headers of a http response
-  factory GroqRateLimitInformation.fromHeaders(Map<String, String> headers) {
-    return GroqRateLimitInformation(
-      totalRequestsPerDay:
-          int.tryParse(headers['x-ratelimit-limit-requests'] ?? '0') ?? 0,
-      remainingRequestsToday:
-          int.tryParse(headers['x-ratelimit-remaining-requests'] ?? '0') ?? 0,
-      totalTokensPerMinute:
-          int.tryParse(headers['x-ratelimit-limit-tokens'] ?? '0') ?? 0,
-      remainingTokensThisMinute:
-          int.tryParse(headers['x-ratelimit-remaining-tokens'] ?? '0') ?? 0,
-    );
-  }
-
   @override
   String toString() {
     return 'GroqRateLimitInformation{totalRequestsPerDay: $totalRequestsPerDay, remainingRequestsPerDay: $remainingRequestsToday, totalTokensPerMinute: $totalTokensPerMinute, remainingTokensPerMinute: $remainingTokensThisMinute}';
