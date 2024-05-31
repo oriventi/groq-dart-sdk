@@ -1,3 +1,7 @@
+## 0.0.6
+
+- added when function on chat events
+
 ## 0.0.5
 
 - refactored example

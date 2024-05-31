@@ -21,7 +21,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
     - Add `groq_sdk` to your `pubspec.yaml` file:
         ```yaml
         dependencies:
-            groq_sdk: ^0.0.4 # add the latest version here
+            groq_sdk: ^0.0.6 # add the latest version here
         ```
     - Run `dart pub get`.
 
@@ -49,12 +49,15 @@ This allows you to process each message (both user requests and model responses)
 final chat = groq.startNewChat(llama3_8b);
 
 chat.stream.listen((event) {
-    if (event is RequestChatEvent) { //Listen for user prompts
-      print('Request was sent...');
-      print(event.message.content);
-    } else if (event is ResponseChatEvent) { //Listen for llm responses
-      print('Received a response: ${event.response.choices.first.message}');
-    }
+    event.when(request: (requestEvent) {
+      //Listen for user prompts
+      print('Request sent...');
+      print(requestEvent.message.content);
+    }, response: (responseEvent) {
+      //Listen for llm responses
+      print(
+          'Received response: ${responseEvent.response.choices.first.message}');
+    });
   });
 ```
 

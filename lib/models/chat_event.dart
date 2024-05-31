@@ -17,6 +17,11 @@ import 'package:groq_sdk/models/groq_usage.dart';
 ///   }
 sealed class ChatEvent {
   const ChatEvent();
+
+  T when<T>({
+    required T Function(RequestChatEvent) request,
+    required T Function(ResponseChatEvent) response,
+  });
 }
 
 ///Is the type received by the chat stream \
@@ -32,6 +37,14 @@ sealed class ChatEvent {
 class RequestChatEvent extends ChatEvent {
   final GroqMessage message;
   RequestChatEvent(this.message);
+
+  @override
+  T when<T>({
+    required T Function(RequestChatEvent) request,
+    required T Function(ResponseChatEvent) response,
+  }) {
+    return request(this);
+  }
 }
 
 ///Is the type received by the chat stream \
@@ -49,4 +62,12 @@ class ResponseChatEvent extends ChatEvent {
   final GroqResponse response;
   final GroqUsage usage;
   ResponseChatEvent(this.response, this.usage);
+
+  @override
+  T when<T>({
+    required T Function(RequestChatEvent) request,
+    required T Function(ResponseChatEvent) response,
+  }) {
+    return response(this);
+  }
 }

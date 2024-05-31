@@ -15,12 +15,13 @@ void main(List<String> arguments) async {
 
   //Listening to chat events
   chat.stream.listen((event) {
-    if (event is RequestChatEvent) {
+    event.when(request: (requestEvent) {
       print('Request sent...');
-      print(event.message.content);
-    } else if (event is ResponseChatEvent) {
-      print('Received response: ${event.response.choices.first.message}');
-    }
+      print(requestEvent.message.content);
+    }, response: (responseEvent) {
+      print(
+          'Received response: ${responseEvent.response.choices.first.message}');
+    });
   });
 
   //Sending a message which will add new data to the listening stream
