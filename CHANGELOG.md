@@ -1,3 +1,7 @@
+## 0.0.5
+
+- refactored example
+
 ## 0.0.4
 
 - added support for translations and transcriptions with audio models
