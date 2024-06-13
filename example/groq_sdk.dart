@@ -4,13 +4,13 @@ void main(List<String> arguments) async {
   final groq = Groq('YOUR_API_KEY');
 
   //Checking model availability
-  if (!await groq.canUseModel(llama3_8b)) {
+  if (!await groq.canUseModel(GroqModels.llama3_8b)) {
     print('Cannot use model');
     return;
   }
 
   //Creating a new chat
-  final chat = groq.startNewChat(llama3_8b,
+  final chat = groq.startNewChat(GroqModels.llama3_8b,
       settings: GroqChatSettings.defaults().copyWith(choicesCount: 2));
 
   //Listening to chat events

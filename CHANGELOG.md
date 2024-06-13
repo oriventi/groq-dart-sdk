@@ -1,3 +1,8 @@
+## 0.0.7
+
+- deprecated global constants
+- added GroqModels to hold all current ids
+
 ## 0.0.6
 
 - added when function on chat events

@@ -164,7 +164,7 @@ class GroqChat {
   ///It is also possible to switch the model during the conversation
   ///Example:
   ///```dart
-  ///chat.switchModel(llama3-8b); //use a model id, provided by Groq
+  ///chat.switchModel(GroqModels.llama3-8b); //use a model id, provided by Groq
   ///```
   void switchModel(String modelId) => _model = modelId;
 

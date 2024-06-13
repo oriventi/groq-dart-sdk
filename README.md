@@ -21,7 +21,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
     - Add `groq_sdk` to your `pubspec.yaml` file:
         ```yaml
         dependencies:
-            groq_sdk: ^0.0.6 # add the latest version here
+            groq_sdk: ^0.0.7 # add the latest version here
         ```
     - Run `dart pub get`.
 
@@ -32,12 +32,12 @@ This initiates a new chat session with the specified model, optionally customizi
 ```dart
 final groq = Groq('YOUR_GROQ_API_KEY');
 //Start a chat with default settings
-if(!await groq.canUseModel(llama3_8b)) return;
+if(!await groq.canUseModel(GroqModels.llama3_8b)) return;
 
-final chat = groq.startNewChat(llama3_8b);
+final chat = groq.startNewChat(GroqModels.llama3_8b);
 
 //Start a chat with custom settings
-final customChat = groq.startNewChat(llama3_70b, settings: GroqChatSettings(
+final customChat = groq.startNewChat(GroqModels.llama3_70b, settings: GroqChatSettings(
     temperature: 0.8, //More creative responses
     maxTokens: 512, //shorter responses
 ));
@@ -46,7 +46,7 @@ final customChat = groq.startNewChat(llama3_70b, settings: GroqChatSettings(
 ### Listening to a chat stream
 This allows you to process each message (both user requests and model responses) as they are sent and received in real-time.
 ```dart
-final chat = groq.startNewChat(llama3_8b);
+final chat = groq.startNewChat(GroqModels.llama3_8b);
 
 chat.stream.listen((event) {
     event.when(request: (requestEvent) {
@@ -72,7 +72,7 @@ print(response.choices.first.message);
 ### Switching models and settings
 This allows you to dynamically change the language model used in the chat session.
 ```dart
-chat.switchModel(mixtral8_7b); //Also available during a running chat
+chat.switchModel(GroqModels.mixtral8_7b); //Also available during a running chat
 ```
 
 ### Accessing Rate Limit Information
@@ -113,7 +113,7 @@ try {
 
 
 ## Constants
-Instead of looking up the standard models, you can use the ids via provided constants:
+Instead of looking up the standard models, you can use the ids via provided constants in `GroqModels`:
 ```dart
 const String mixtral8_7b = 'mixtral-8x7b-32768';
 const String gemma_7b = 'gemma-7b-it';
@@ -123,7 +123,7 @@ const String whisper_large_v3 = 'whisper-large-v3';
 ```
 You can use these constants directly when starting a new chat or switching models:
 ```dart
-final chat = groq.startNewChat(mixtral8_7b);
+final chat = groq.startNewChat(GroqModels.mixtral8_7b);
 ```
 
 ## Chat Settings
