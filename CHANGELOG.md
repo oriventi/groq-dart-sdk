@@ -1,3 +1,7 @@
+## 0.0.8
+
+- added gemma2 model
+
 ## 0.0.7
 
 - deprecated global constants
