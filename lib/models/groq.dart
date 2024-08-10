@@ -3,7 +3,6 @@ import 'package:groq_sdk/models/groq_audio_response.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
-import 'package:groq_sdk/models/groq_usage.dart';
 
 class Groq {
   ///The API key to use the Groq API \
@@ -91,8 +90,7 @@ class Groq {
   ///);
   ///```
   ///Supported file formats: mp3, mp4, mpeg, mpga, m4a, wav, and webm. \
-  Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
-      transcribeAudio({
+  Future<(GroqAudioResponse, GroqRateLimitInformation)> transcribeAudio({
     required String audioFileUrl,
     required String modelId,
     String? customApiKey,
@@ -120,8 +118,7 @@ class Groq {
   ///);
   ///```
   ///Supported file formats: mp3, mp4, mpeg, mpga, m4a, wav, and webm. \
-  Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
-      translateAudio({
+  Future<(GroqAudioResponse, GroqRateLimitInformation)> translateAudio({
     required String audioFileUrl,
     required String modelId,
     String? customApiKey,

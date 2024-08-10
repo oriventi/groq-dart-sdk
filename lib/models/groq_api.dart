@@ -93,8 +93,7 @@ class GroqApi {
   }
 
   ///transcribes the audio file at the given path using the model with the given model id
-  static Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
-      transcribeAudio({
+  static Future<(GroqAudioResponse, GroqRateLimitInformation)> transcribeAudio({
     required String apiKey,
     required String filePath,
     required String modelId,
@@ -113,11 +112,12 @@ class GroqApi {
     final jsonBody = json.decode(responseBody);
     if (response.statusCode == 200) {
       final audioResponse = GroqParser.audioResponseFromJson(jsonBody);
-      final usage =
-          GroqParser.groqUsageFromAudioJson(jsonBody['x_groq']['usage']);
+      print(jsonBody);
+      // final usage =
+      //     GroqParser.groqUsageFromAudioJson(jsonBody['x_groq']['usage']);
       final rateLimitInfo =
           GroqParser.rateLimitInformationFromHeaders(response.headers);
-      return (audioResponse, usage, rateLimitInfo);
+      return (audioResponse, rateLimitInfo);
     } else {
       throw GroqException(
           statusCode: response.statusCode, error: GroqError.fromJson(jsonBody));
@@ -125,8 +125,7 @@ class GroqApi {
   }
 
   ///Translates the audio file at the given file path to text
-  static Future<(GroqAudioResponse, GroqUsage, GroqRateLimitInformation)>
-      translateAudio({
+  static Future<(GroqAudioResponse, GroqRateLimitInformation)> translateAudio({
     required String apiKey,
     required String filePath,
     required String modelId,
@@ -147,11 +146,9 @@ class GroqApi {
     final jsonBody = json.decode(responseBody);
     if (response.statusCode == 200) {
       final audioResponse = GroqParser.audioResponseFromJson(jsonBody);
-      final usage =
-          GroqParser.groqUsageFromAudioJson(jsonBody['x_groq']['usage']);
       final rateLimitInfo =
           GroqParser.rateLimitInformationFromHeaders(response.headers);
-      return (audioResponse, usage, rateLimitInfo);
+      return (audioResponse, rateLimitInfo);
     } else {
       throw GroqException(
           statusCode: response.statusCode, error: GroqError.fromJson(jsonBody));

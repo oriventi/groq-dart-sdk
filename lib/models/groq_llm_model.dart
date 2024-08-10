@@ -21,6 +21,13 @@ class GroqModels {
   static const String llama3_70b = 'llama3-70b-8192';
 // ignore: constant_identifier_names
   static const String whisper_large_v3 = 'whisper-large-v3';
+  static const String llama31_70b_versatile = 'llama-3.1-70b-versatile';
+  static const String llama31_8b_instant = 'llama-3.1-8b-instant';
+  static const String llama3_groq_70b_tool_use_preview =
+      'llama3-groq-70b-8192-tool-use-preview';
+  static const String llama3_groq_8b_tool_use_preview =
+      'llama3-groq-8b-8192-tool-use-preview';
+  static const String llama_guard_3_8b = 'llama-guard-3-8b';
 }
 
 class GroqLLMModel {

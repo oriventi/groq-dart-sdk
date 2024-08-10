@@ -71,3 +71,8 @@ class ResponseChatEvent extends ChatEvent {
     return response(this);
   }
 }
+
+// class StreamedResponseChatEvent extends ChatEvent {
+
+//   //TODO
+// }
