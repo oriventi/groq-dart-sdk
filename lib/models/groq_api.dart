@@ -75,7 +75,7 @@ class GroqApi {
     final rateLimitInfo =
         GroqParser.rateLimitInformationFromHeaders(response.headers);
     if (response.statusCode < 300) {
-      final Map<String, dynamic> jsonData = json.decode(response.body);
+      final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
       final GroqResponse groqResponse =
           GroqParser.groqResponseFromJson(jsonData);
       final GroqUsage groqUsage =
