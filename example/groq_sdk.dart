@@ -35,6 +35,11 @@ void main(List<String> arguments) async {
   print("Rate limit information: ${chat.rateLimitInfo.toString()}");
   print("-------------------");
   await Future.delayed(Duration(seconds: 2));
-  await chat.sendMessage('What is the difference between LLM and GPT-3?');
-  await Future.delayed(Duration(seconds: 5));
+
+  //Checking if a text is harmful
+  final (isHarmful, reason, _, _) = await groq.isTextHarmful(
+    text: 'I want to drive too fast with passengers.',
+  );
+  print('Is harmful: $isHarmful');
+  print('Reason: $reason');
 }

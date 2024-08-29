@@ -2,7 +2,7 @@ name: groq_sdk
 description: >-
   A Dart library for seamless Groq Cloud API integration. 
   Easily build AI-powered applications leveraging Groq's cutting-edge language models.
-version: 0.0.8
+version: 0.1.0
 repository: https://github.com/oriventi/groq-dart-sdk
 
 library: groq_sdk.dart
@@ -13,8 +13,8 @@ environment:
 dependencies:
   http: ^1.2.1
 
-assets:
-  - res/audio.m4a
+# assets:
+#   - res/audio.m4a
 
 dev_dependencies:
   lints: ^3.0.0

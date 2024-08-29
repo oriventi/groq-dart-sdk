@@ -95,4 +95,40 @@ class GroqParser {
           milliseconds: ((json['total_time'] as double) * 1000).toInt()),
     );
   }
+
+  static GroqLlamaGuardCategory? groqLlamaGuardCategoryFromString(
+      String category) {
+    switch (category) {
+      case 'S1':
+        return GroqLlamaGuardCategory.violentCrime;
+      case 'S2':
+        return GroqLlamaGuardCategory.nonViolentCrime;
+      case 'S3':
+        return GroqLlamaGuardCategory.sexRelatedCrime;
+      case 'S4':
+        return GroqLlamaGuardCategory.childSexualExploitation;
+      case 'S5':
+        return GroqLlamaGuardCategory.defamation;
+      case 'S6':
+        return GroqLlamaGuardCategory.specializedAdvice;
+      case 'S7':
+        return GroqLlamaGuardCategory.privacy;
+      case 'S8':
+        return GroqLlamaGuardCategory.intellectualProperty;
+      case 'S9':
+        return GroqLlamaGuardCategory.indiscriminateWeapons;
+      case 'S10':
+        return GroqLlamaGuardCategory.hate;
+      case 'S11':
+        return GroqLlamaGuardCategory.selfHarm;
+      case 'S12':
+        return GroqLlamaGuardCategory.sexualContent;
+      case 'S13':
+        return GroqLlamaGuardCategory.elections;
+      case 'S14':
+        return GroqLlamaGuardCategory.codeInterpreterAbuse;
+      default:
+        return null;
+    }
+  }
 }

@@ -1,8 +1,7 @@
+import 'package:groq_sdk/groq_sdk.dart';
 import 'package:groq_sdk/models/groq_api.dart';
 import 'package:groq_sdk/models/groq_audio_response.dart';
-import 'package:groq_sdk/models/groq_chat.dart';
-import 'package:groq_sdk/models/groq_llm_model.dart';
-import 'package:groq_sdk/models/groq_rate_limit_information.dart';
+import 'package:groq_sdk/utils/groq_parser.dart';
 
 class Groq {
   ///The API key to use the Groq API \
@@ -83,7 +82,7 @@ class Groq {
   ///Returns the transcribed audio response, the usage of the groq resources and the rate limit information \
   ///Example:
   ///```dart
-  ///final (response, usage, rateLimit) = await groq.transcribeAudio(
+  ///final (response, rateLimit) = await groq.transcribeAudio(
   ///  audioFileUrl: 'YOUR_DIRECTORY/audio.mp3',
   ///  modelId: whisper_large_v3,
   ///  customApiKey: 'EXAMPLE_API_KEY',
@@ -110,7 +109,7 @@ class Groq {
   ///Returns the translated audio response, the usage of the groq resources and the rate limit information \
   ///Example:
   ///```dart
-  ///final (response, usage, rateLimit) = await groq.translateAudio(
+  ///final (response, rateLimit) = await groq.translateAudio(
   ///  audioFileUrl: 'YOUR_DIRECTORY/audio.mp3',
   ///  modelId: whisper_large_v3,
   ///  customApiKey: 'EXAMPLE_API_KEY',
@@ -131,5 +130,44 @@ class Groq {
       apiKey: specificApiKey,
       temperature: temperature,
     );
+  }
+
+  ///Checks if the given `text` is harmful \
+  ///`customApiKey` is the API key to use for the check, defaults to the Groq instance API key \
+  ///Returns whether the text is harmful, the harmful category and the rate limit information \
+  ///Example:
+  ///```dart
+  ///final (isHarmful, harmfulCategory, usage, rateLimit) = await groq.isTextHarmful(
+  ///  text: 'YOUR_TEXT',
+  /// );
+  ///
+  /// ```
+  Future<(bool, GroqLlamaGuardCategory?, GroqUsage, GroqRateLimitInformation?)>
+      isTextHarmful({
+    required String text,
+    String? customApiKey,
+  }) async {
+    final specificApiKey = customApiKey ?? apiKey;
+    final chat = GroqChat(GroqModels.llama_guard_3_8b, specificApiKey,
+        GroqChatSettings.defaults());
+    final (response, usage) = await chat.sendMessage(text);
+    final answerString = response.choices.first.message;
+    bool isHarmful = false;
+    GroqLlamaGuardCategory? harmfulCategory;
+    if (answerString.contains("unsafe")) {
+      isHarmful = true;
+      final List<String> answerList = answerString.trim().split('\n');
+      print(answerList.toString());
+      if (answerList.length < 2) {
+        throw GroqException(
+            statusCode: 400,
+            error: GroqError(
+                message: 'Received invalid response', type: 'InvalidResponse'));
+      }
+      String harmfulCategoryString = answerList[1];
+      harmfulCategory =
+          GroqParser.groqLlamaGuardCategoryFromString(harmfulCategoryString);
+    }
+    return (isHarmful, harmfulCategory, usage, chat.rateLimitInfo);
   }
 }

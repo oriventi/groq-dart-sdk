@@ -1,8 +1,7 @@
 import 'package:groq_sdk/groq_sdk.dart';
 
 void main(List<String> arguments) async {
-  final groq = Groq(
-      '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'); //TODO delete
+  final groq = Groq('YOU_API_KEY');
 
   //Checking model availability
   if (!await groq.canUseModel(GroqModels.whisper_large_v3)) {

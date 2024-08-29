@@ -12,6 +12,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
 - **Future-proof:** Easily support new Groq models as they become available.
 - **Audio Transcription:** Transcribe audio files into text using Groq's powerful Whisper models.
 - **Audio Translation:** Translate audio files directly into english.
+- **Content Moderation:** Easily check if texts are harmful.
 
 ## Getting Started
 1. Obtain a Groq API Key:
@@ -21,7 +22,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
     - Add `groq_sdk` to your `pubspec.yaml` file:
         ```yaml
         dependencies:
-            groq_sdk: ^0.0.7 # add the latest version here
+            groq_sdk: ^0.1.0 # add the latest version here
         ```
     - Run `dart pub get`.
 
@@ -102,12 +103,24 @@ Transcribe audio files using Groq's supported `whisper-large-v3` model (or other
 final groq = Groq('YOUR_GROQ_API_KEY');
 
 try {
-  final (transcriptionResult, usage, rateLimitInformation) = await groq.transcribeAudio(
+  final (transcriptionResult, rateLimitInformation) = await groq.transcribeAudio(
     filePath: './path/to/your/audio.mp3', // Adjust file path as needed
   );
   print(transcriptionResult.text); // The transcribed text
 } on GroqException catch (e) {
   print('Error transcribing audio: $e');
+}
+```
+
+### Content Moderation
+Easily check if a text is harmful using the isTextHarmful method. It analyzes the text and returns whether it's harmful, the harmful category, and usage details.
+```dart
+final (isHarmful, harmfulCategory, usage, rateLimit) = await groq.isTextHarmful(
+  text: 'YOUR_TEXT',
+);
+
+if (isHarmful) {
+  print('Harmful content detected: $harmfulCategory');
 }
 ```
 
@@ -120,6 +133,13 @@ const String gemma_7b = 'gemma-7b-it';
 const String llama3_8b = 'llama3-8b-8192';
 const String llama3_70b = 'llama3-70b-8192';
 const String whisper_large_v3 = 'whisper-large-v3';
+static const String llama31_70b_versatile = 'llama-3.1-70b-versatile';
+static const String llama31_8b_instant = 'llama-3.1-8b-instant';
+static const String llama3_groq_70b_tool_use_preview =
+    'llama3-groq-70b-8192-tool-use-preview';
+static const String llama3_groq_8b_tool_use_preview =
+    'llama3-groq-8b-8192-tool-use-preview';
+static const String llama_guard_3_8b = 'llama-guard-3-8b';
 ```
 You can use these constants directly when starting a new chat or switching models:
 ```dart

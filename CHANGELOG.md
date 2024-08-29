@@ -1,3 +1,8 @@
+## 0.1.0
+- fixed audio transcription/translation
+- added new models
+- added harmful semantic checking
+
 ## 0.0.8
 
 - added gemma2 model

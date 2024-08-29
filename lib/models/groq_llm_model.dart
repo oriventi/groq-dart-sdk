@@ -1,5 +1,7 @@
 //These are deprecated
 
+// ignore_for_file: constant_identifier_names
+
 @Deprecated('Use GroqModels.mixtral8_7b instead')
 const String mixtral8_7b = 'mixtral-8x7b-32768';
 @Deprecated('Use GroqModels.gemma_7b instead')
@@ -9,7 +11,6 @@ const String llama3_8b = 'llama3-8b-8192';
 @Deprecated('Use GroqModels.llama3_70b instead')
 const String llama3_70b = 'llama3-70b-8192';
 @Deprecated('Use GroqModels.whisper_large_v3 instead')
-// ignore: constant_identifier_names
 const String whisper_large_v3 = 'whisper-large-v3';
 
 ///GroqModels holds a list of available models
@@ -19,7 +20,6 @@ class GroqModels {
   static const String gemma2_9b = 'gemma2-9b-it';
   static const String llama3_8b = 'llama3-8b-8192';
   static const String llama3_70b = 'llama3-70b-8192';
-// ignore: constant_identifier_names
   static const String whisper_large_v3 = 'whisper-large-v3';
   static const String llama31_70b_versatile = 'llama-3.1-70b-versatile';
   static const String llama31_8b_instant = 'llama-3.1-8b-instant';
@@ -47,4 +47,21 @@ class GroqLLMModel {
   String toString() {
     return 'GroqLLMModel{modelId: $modelId, ownedBy: $ownedBy, isCurrentlyActive: $isCurrentlyActive, contextWindow: $contextWindow}';
   }
+}
+
+enum GroqLlamaGuardCategory {
+  violentCrime,
+  nonViolentCrime,
+  sexRelatedCrime,
+  childSexualExploitation,
+  defamation,
+  specializedAdvice,
+  privacy,
+  intellectualProperty,
+  indiscriminateWeapons,
+  hate,
+  selfHarm,
+  sexualContent,
+  elections,
+  codeInterpreterAbuse,
 }
