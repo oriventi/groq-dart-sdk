@@ -24,7 +24,8 @@ class GroqException implements Exception {
   GroqException({required this.statusCode, required this.error});
 
   factory GroqException.fromResponse(http.Response response) {
-    final Map<String, dynamic> jsonBody = json.decode(response.body);
+    final Map<String, dynamic> jsonBody =
+        json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
 
     if (jsonBody.containsKey('error')) {
       final groqError = GroqError.fromJson(jsonBody);

@@ -29,7 +29,8 @@ class GroqApi {
     final response =
         await AuthHttp.get(url: '$_getModelBaseUrl/$modelId', apiKey: apiKey);
     if (response.statusCode == 200) {
-      return GroqParser.llmModelFromJson(json.decode(response.body));
+      return GroqParser.llmModelFromJson(
+          json.decode(utf8.decode(response.bodyBytes, allowMalformed: true)));
     } else {
       throw GroqException.fromResponse(response);
     }
@@ -39,7 +40,8 @@ class GroqApi {
   static Future<List<GroqLLMModel>> listModels(String apiKey) async {
     final response = await AuthHttp.get(url: _getModelBaseUrl, apiKey: apiKey);
     if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = json.decode(response.body);
+      final Map<String, dynamic> jsonData =
+          json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
       final List<dynamic> jsonList = jsonData['data'] as List<dynamic>;
       return jsonList.map((json) => GroqParser.llmModelFromJson(json)).toList();
     } else {
@@ -75,7 +77,8 @@ class GroqApi {
     final rateLimitInfo =
         GroqParser.rateLimitInformationFromHeaders(response.headers);
     if (response.statusCode < 300) {
-      final Map<String, dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
+      final Map<String, dynamic> jsonData =
+          json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
       final GroqResponse groqResponse =
           GroqParser.groqResponseFromJson(jsonData);
       final GroqUsage groqUsage =
