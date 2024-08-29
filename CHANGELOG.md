@@ -2,6 +2,7 @@
 - fixed audio transcription/translation
 - added new models
 - added harmful semantic checking
+- utf8 decoding fix
 
 ## 0.0.8
 
