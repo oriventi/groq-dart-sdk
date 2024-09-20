@@ -100,8 +100,9 @@ class GroqApi {
     required String apiKey,
     required String filePath,
     required String modelId,
+    required Map<String, String> optionalParameters,
   }) async {
-    var request =
+    final request =
         http.MultipartRequest('POST', Uri.parse(_getAudioTranscriptionUrl));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
@@ -109,7 +110,12 @@ class GroqApi {
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
     request.fields['model'] = modelId;
 
-    var response = await request.send();
+    // Add optional fields from the map
+    optionalParameters.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
+    final response = await request.send();
     final responseBody = await response.stream.bytesToString();
 
     final jsonBody = json.decode(responseBody);
