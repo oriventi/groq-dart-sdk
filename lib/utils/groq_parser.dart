@@ -11,6 +11,7 @@ class GroqParser {
     return GroqAudioResponse(
       requestId: json['x_groq']['id'] as String,
       text: json['text'] as String,
+      json: json,
     );
   }
 
