@@ -93,12 +93,14 @@ class Groq {
     required String audioFileUrl,
     required String modelId,
     String? customApiKey,
+    Map<String, String> optionalParameters = const {},
   }) async {
     final specificApiKey = customApiKey ?? apiKey;
     return await GroqApi.transcribeAudio(
       filePath: audioFileUrl,
       modelId: modelId,
       apiKey: specificApiKey,
+      optionalParameters: optionalParameters,
     );
   }
 
