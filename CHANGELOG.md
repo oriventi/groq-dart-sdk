@@ -1,4 +1,9 @@
+## 0.1.1
+
+- add new model constants to GroqModels
+
 ## 0.1.0
+
 - fixed audio transcription/translation
 - added new models
 - added harmful semantic checking
