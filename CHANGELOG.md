@@ -1,3 +1,7 @@
+## 0.1.3
+
+- updated dependencies
+
 ## 0.1.2
 
 - added expectJSON possibility in sendMessage()
