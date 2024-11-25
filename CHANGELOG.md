@@ -1,3 +1,7 @@
+## 0.1.2
+
+- added expectJSON possibility in sendMessage()
+
 ## 0.1.1
 
 - add new model constants to GroqModels
