@@ -88,9 +88,13 @@ final (response, usage) = await chat.sendMessage(
   'Is the following city name a capital? Answer in a json format with the key "capital", which takes a bool as value: New York',
   expectJSON: true,
 );
-// It will return
+```
+
+It will return
+
+```json
 {
-    "capital": false,
+  "capital": false
 }
 ```
 
