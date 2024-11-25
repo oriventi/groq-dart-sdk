@@ -55,6 +55,7 @@ class GroqApi {
     required String apiKey,
     required GroqMessage prompt,
     required GroqChat chat,
+    required bool expectJSON,
   }) async {
     final Map<String, dynamic> jsonMap = {};
     List<Map<String, dynamic>> messages = [];
@@ -70,6 +71,9 @@ class GroqApi {
     messages.add(prompt.toJson());
     jsonMap['messages'] = messages;
     jsonMap['model'] = chat.model;
+    if (expectJSON) {
+      jsonMap['response_format'] = {"type": "json_object"};
+    }
     jsonMap.addAll(chat.settings.toJson());
     final response = await AuthHttp.post(
         url: _chatCompletionUrl, apiKey: apiKey, body: jsonMap);

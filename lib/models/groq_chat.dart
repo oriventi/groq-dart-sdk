@@ -240,6 +240,8 @@ class GroqChat {
   ///[prompt] the message content
   ///[role] the message role **DO NOT USE assistant**, it is reserved for the AI
   ///[username] the username of the message sender (optional)
+  ///[expectJSON] whether to expect a JSON response or not. You need to explain the JSON structure
+  ///in the prompt for this feature
   ///Returns a tuple of the response and the resource usage
   ///Example:
   ///```dart
@@ -251,6 +253,7 @@ class GroqChat {
     String prompt, {
     GroqMessageRole role = GroqMessageRole.user,
     String? username,
+    bool expectJSON = false,
   }) async {
     final request =
         GroqMessage(content: prompt, role: role, username: username);
@@ -264,6 +267,7 @@ class GroqChat {
         apiKey: _apiKey,
         prompt: request,
         chat: this,
+        expectJSON: expectJSON,
       );
     } catch (e) {
       _streamController.addError(e);
