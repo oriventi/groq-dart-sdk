@@ -1,11 +1,13 @@
 import 'dart:convert';
 
-import 'package:groq_sdk/groq_sdk.dart';
+import 'package:groq_sdk/models/groq_chat.dart';
+import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
 import 'package:groq_sdk/models/groq_audio_response.dart';
+import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
 
 class GroqParser {
