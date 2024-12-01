@@ -1,3 +1,7 @@
+## 0.2.0
+
+- added tool use functionality
+
 ## 0.1.4
 
 - improved documentation

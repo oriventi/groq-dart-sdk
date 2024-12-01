@@ -10,6 +10,8 @@
 
 A powerful Dart client library for interacting with the Groq Cloud API, empowering you to easily harness the capabilities of state-of-the-art Large Language Models (LLMs) within your Dart and Flutter applications.
 
+> **Note:** This is an independent project and not an official package maintained by Groq. For official resources, please visit [groq.com](https://groq.com).
+
 ## Features
 
 - **Intuitive Chat Interface:** Seamlessly create and manage chat sessions with Groq's LLMs.
