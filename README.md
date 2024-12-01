@@ -1,3 +1,11 @@
+<a href="https://groq.com" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://groq.com/wp-content/uploads/2024/03/PBG-mark1-color.svg"
+    alt="Powered by Groq for fast inference."
+    width="200" height="100"
+  />
+</a>
+
 ## Groq Dart SDK
 
 A powerful Dart client library for interacting with the Groq Cloud API, empowering you to easily harness the capabilities of state-of-the-art Large Language Models (LLMs) within your Dart and Flutter applications.
@@ -5,9 +13,10 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
 ## Features
 
 - **Intuitive Chat Interface:** Seamlessly create and manage chat sessions with Groq's LLMs.
-- **Streaming Support:** Receive chat responses in real time with streaming functionality.
+<!-- - **Streaming Support:** Receive chat responses in real time with streaming functionality. -->
 - **Model Management:** Retrieve metadata about available Groq models and dynamically switch between them.
 - **Customization:** Configure chat settings to fine-tune responses (temperature, max tokens, etc.).
+- **Tool Use:** Let the model invoke functions to retrieve additional data or perform tasks.
 - **Resource Usage Tracking:** Get detailed insights into token usage and request/response times.
 - **Rate Limit Information:** Stay informed about your Groq API usage limits.
 - **Future-proof:** Easily support new Groq models as they become available.
@@ -104,6 +113,74 @@ This allows you to dynamically change the language model used in the chat sessio
 
 ```dart
 chat.switchModel(GroqModels.mixtral8_7b); //Also available during a running chat
+```
+
+### Tool Use
+
+The Groq SDK allows you to register tools that can be invoked dynamically during a chat. Tools encapsulate specific functionality and can accept parameters to customize their behavior.
+
+The following example demonstrates how to create a weather tool, register it in a chat, and handle a tool call dynamically.
+
+```dart
+// Define the weather tool
+final weatherTool = GroqToolItem(
+  functionName: 'get_weather',
+  functionDescription: 'Get weather information for a specified location',
+  parameters: [
+    GroqToolParameter(
+      parameterName: 'location',
+      parameterDescription: 'City or location name',
+      parameterType: GroqToolParameterType.string,
+      isRequired: true,
+    ),
+    GroqToolParameter(
+      parameterName: 'units',
+      parameterDescription: 'Temperature units (metric or imperial)',
+      parameterType: GroqToolParameterType.string,
+      isRequired: false,
+      allowedValues: ['metric', 'imperial'],
+    ),
+  ],
+  function: (args) {
+      final location = args['location'] as String;
+      final units = args['units'] as String? ?? 'metric';
+      return MyWeatherApi.getWeather(location, units);
+  },
+);
+
+final chat = groq.startNewChat(GroqModels.llama3_groq_70b_tool_use_preview);
+
+// Register the tool with the chat
+chat.registerTool(weatherTool);
+
+// Send a message to the chat and handle tool calls
+final (response, usage) = await chat.sendMessage(
+  'What is the weather in Boston like (in metric units)?',
+);
+
+final message = response.choices.first.messageData;
+
+// Handle tool calls dynamically
+if (message.isToolCall) {
+    for (final toolCall in message.toolCalls) {
+      print('Tool call: ${toolCall.functionName}');
+      final retrieveWeatherInBoston = chat.getToolCallable(toolCall);
+      print('Weather result: ${retrieveWeatherInBoston()}');
+    }
+  }
+```
+
+- `weatherTool` specifies the `get_weather` function, requiring a location parameter and an optional `units` parameter, which can only have specific values or null.
+- The `registerTool` method adds the tool to the chat, making it available for invocation.
+- When the model makes a tool call (`isToolCall` is true), retrieve the callable function using `chat.getToolCallable` and execute it as you want.
+
+The output of the above example should look something like this:
+
+```yaml
+Tool call: get_weather
+Weather result: {location: Boston, temperature: 22, units: metric}
+Tool call: get_weather
+Weather result: {location: Boston, temperature: 71.6, units: imperial}
 ```
 
 ### Accessing Rate Limit Information

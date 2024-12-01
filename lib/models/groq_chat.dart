@@ -7,6 +7,7 @@ import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
+import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
 
 class GroqChatSettings {
@@ -119,6 +120,7 @@ class GroqChat {
   GroqRateLimitInformation? _rateLimitInfo;
   final StreamController<ChatEvent> _streamController =
       StreamController.broadcast();
+  final List<GroqToolItem> _registeredTools = [];
 
   ///GroqChat constructor
   ///[model] the model id
@@ -209,6 +211,98 @@ class GroqChat {
     return messages;
   }
 
+  ///Registers a tool to the chat, which always can be called by the model.
+  ///[tool] the tool to register
+  ///Example:
+  ///```dart
+  /// final weatherTool = GroqToolItem(
+  ///   functionName: 'get_weather',
+  ///   functionDescription: 'Get weather information for a specified location',
+  ///   parameters: [
+  ///     GroqToolParameter(
+  ///       parameterName: 'location',
+  ///       parameterDescription: 'City or location name',
+  ///       parameterType: GroqToolParameterType.string,
+  ///       isRequired: true,
+  ///     ),
+  ///     GroqToolParameter(
+  ///       parameterName: 'units',
+  ///       parameterDescription: 'Temperature units (metric or imperial)',
+  ///       parameterType: GroqToolParameterType.string,
+  ///       isRequired: false,
+  ///       allowedValues: ['metric', 'imperial'],
+  ///     ),
+  ///   ],
+  ///   function: (args) {
+  ///     final location = args['location'] as String;
+  ///     final units = args['units'] as String? ?? 'metric';
+  ///     return {
+  ///       'location': location,
+  ///       'temperature': units == 'metric' ? 22 : 71.6,
+  ///       'units': units,
+  ///     };
+  ///   },
+  /// );
+  /// chat.registerTool(weatherTool);
+  ///```
+  void registerTool(GroqToolItem tool) {
+    _registeredTools.add(tool);
+  }
+
+  ///Unregisters a tool from the chat
+  ///[toolName] the name of the tool to unregister
+  ///Example:
+  ///```dart
+  ///chat.unregisterTool('toolName');
+  ///```
+  void unregisterTool(String toolName) {
+    _registeredTools.removeWhere((element) => element.functionName == toolName);
+  }
+
+  ///Registers multiple tools to the chat
+  ///[tools] the tools to register
+  void registerTools(List<GroqToolItem> tools) {
+    _registeredTools.addAll(tools);
+  }
+
+  ///Clears all registered tools from the chat and registers the new tools
+  ///Example:
+  ///```dart
+  ///chat.setTools([tool1, tool2]);
+  ///```
+  void setTools(List<GroqToolItem> tools) {
+    _registeredTools.clear();
+    _registeredTools.addAll(tools);
+  }
+
+  /// Validates and returns the registered tool function with the given arguments.
+  ///[toolCall] the tool call usually returned from the GroqMessage object.
+  ///returns the `callable function`, if the tool is registered.
+  ///Throws an exception if the tool is not found.
+  Function getToolCallable(GroqToolCall toolCall) {
+    GroqToolItem? tool;
+    try {
+      tool = _registeredTools.firstWhere((element) {
+        print('element.functionName: ${element.functionName}');
+        print('toolCall.functionName: ${toolCall.functionName}');
+        return element.functionName == toolCall.functionName;
+      });
+    } catch (e) {
+      throw Exception('Tool not found');
+    }
+    final response = tool.validateAndGetCallable(toolCall.arguments);
+    return response;
+  }
+
+  ///Returns the registered tools in the chat
+  ///Example:
+  ///```dart
+  ///final tools = chat.registeredTools;
+  ///print(tools.first.functionName); //prints the first tool name
+  ///```
+  ///Returns an empty list if no tools are registered
+  List<GroqToolItem> get registeredTools => _registeredTools;
+
   ///Returns the latest response in the conversation
   ///```dart
   ///final response = chat.latestResponse;
@@ -280,17 +374,3 @@ class GroqChat {
     return (response, usage);
   }
 }
-
-///User server-side events to send the completion in small deltas rather than
-///in a single batch after all processing has finished. \
-///This reduces the time to first token received.
-///Default: `false`
-//TODO: Implement stream feature
-// final bool stream;
-
-///How many chat completion choices to generate for each input message. \
-///Note that you will be `charged` based on the number of generated tokens across all of the choices. \
-///Keep `n` as `1` to minimize costs. \
-///Default: `1`
-//TODO: Implement choicesCount feature
-// final int choicesCount;

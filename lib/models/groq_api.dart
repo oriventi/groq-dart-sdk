@@ -71,6 +71,10 @@ class GroqApi {
     messages.add(prompt.toJson());
     jsonMap['messages'] = messages;
     jsonMap['model'] = chat.model;
+    if (chat.registeredTools.isNotEmpty) {
+      jsonMap['tools'] =
+          chat.registeredTools.map((tool) => tool.toJson()).toList();
+    }
     if (expectJSON) {
       jsonMap['response_format'] = {"type": "json_object"};
     }
@@ -125,7 +129,6 @@ class GroqApi {
     final jsonBody = json.decode(responseBody);
     if (response.statusCode == 200) {
       final audioResponse = GroqParser.audioResponseFromJson(jsonBody);
-      print(jsonBody);
       // final usage =
       //     GroqParser.groqUsageFromAudioJson(jsonBody['x_groq']['usage']);
       final rateLimitInfo =

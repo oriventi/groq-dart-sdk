@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
@@ -27,11 +29,34 @@ class GroqParser {
 
   ///Parses the message information from the json
   static GroqMessage groqMessageFromJson(Map<String, dynamic> json) {
+    if (json['tool_calls'] != null && json['tool_calls'].isNotEmpty) {
+      //Is tool call
+      return GroqMessage(
+          content: '',
+          isToolCall: true,
+          toolCalls: (json['tool_calls'] as List)
+              .map((item) => groqToolCallFromJson(item as Map<String, dynamic>))
+              .toList(),
+          role: GroqMessageRoleParser.tryParse(json['role'] as String) ??
+              GroqMessageRole.assistant,
+          username: json['user'] as String?);
+    }
     return GroqMessage(
       content: json['content'] as String,
       username: json['user'] as String?,
       role: GroqMessageRoleParser.tryParse(json['role'] as String) ??
           GroqMessageRole.user,
+    );
+  }
+
+  static GroqToolCall groqToolCallFromJson(Map<String, dynamic> json) {
+    print(json.toString());
+    return GroqToolCall(
+      callId: json['id'] as String,
+      // role: GroqMessageRoleParser.tryParse(json['role'] as String) ??
+      //     GroqMessageRole.user,
+      functionName: json['function']['name'] as String,
+      arguments: jsonDecode(json['function']['arguments']),
     );
   }
 

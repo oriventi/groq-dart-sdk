@@ -8,3 +8,4 @@ export 'models/groq_rate_limit_information.dart';
 export 'models/groq_response.dart';
 export 'models/groq_usage.dart';
 export 'models/groq.dart';
+export 'models/groq_tool_use_item.dart';
