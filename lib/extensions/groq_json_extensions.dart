@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_message.dart';
+import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
 import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
@@ -19,7 +22,7 @@ extension GroqChatSettingsExtension on GroqChatSettings {
   }
 }
 
-extension GorqToolParameterTypeExtension on GroqToolParameterType {
+extension GroqToolParameterTypeExtension on GroqToolParameterType {
   String toJson() {
     switch (this) {
       case GroqToolParameterType.string:
@@ -59,6 +62,33 @@ extension GroqToolUseExtension on GroqToolItem {
       }
     };
   }
+
+  Map<String, dynamic> toChatJson() {
+    return {
+      'functionName': functionName,
+      'functionDescription': functionDescription,
+      // 'function': functionToStringId(function),
+      'parameters': parameters.map((parameter) {
+        return {
+          'name': parameter.parameterName,
+          'description': parameter.parameterDescription,
+          'type': parameter.parameterType.toJson(),
+          'allowedValues': parameter.allowedValues,
+          'isRequired': parameter.isRequired,
+        };
+      }).toList(),
+    };
+  }
+}
+
+extension GroqResponseExtension on GroqResponse {
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'choices': choices.map((choice) => choice.toJson()).toList(),
+      'created': createdAt.millisecondsSinceEpoch,
+    };
+  }
 }
 
 extension GroqConversationItemExtension on GroqConversationItem {
@@ -69,18 +99,75 @@ extension GroqConversationItemExtension on GroqConversationItem {
 
   void setResponseFromJson(Map<String, dynamic> json) {
     response = GroqParser.groqResponseFromJson(json);
-    usage = GroqParser.groqUsageFromChatJson(json);
+    usage = GroqParser.groqUsageFromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "model": model,
+      "request": request.toJson(),
+      "response": response?.toJson(),
+      "usage": usage?.toJson()
+    };
+  }
+}
+
+extension GroqUsageExtension on GroqUsage {
+  Map<String, dynamic> toJson() {
+    return {
+      'promptTokens': promptTokens,
+      'completionTokens': completionTokens,
+      'promptTime': promptTime.inMilliseconds,
+      'completionTime': completionTime.inMilliseconds,
+    };
+  }
+}
+
+extension GroqChoiceExtension on GroqChoice {
+  Map<String, dynamic> toJson() {
+    return {
+      'message': messageData.toJson(),
+      'finish_reason': finishReason,
+    };
+  }
+}
+
+extension GroqRateLimitInformationExtension on GroqRateLimitInformation {
+  Map<String, dynamic> toJson() {
+    return {
+      'totalRequestsPerDay': totalRequestsPerDay,
+      'remainingRequestsToday': remainingRequestsToday,
+      'totalTokensPerMinute': totalTokensPerMinute,
+      'remainingTokensThisMinute': remainingTokensThisMinute,
+    };
+  }
+}
+
+extension GroqToolCallExtension on GroqToolCall {
+  Map<String, dynamic> toJson() {
+    return {
+      'id': callId,
+      'type': 'function',
+      'function': {
+        'name': functionName,
+        'arguments': jsonEncode(arguments),
+      },
+    };
   }
 }
 
 extension GroqMessageExtension on GroqMessage {
   Map<String, dynamic> toJson() {
-    final jsonMap = {
+    final Map<String, dynamic> jsonMap = {
       'content': content,
       'role': GroqMessageRoleParser.toId(role),
     };
+    if (toolCalls.isNotEmpty) {
+      jsonMap['tool_calls'] =
+          toolCalls.map((toolCall) => toolCall.toJson()).toList();
+    }
     if (username != null) {
-      jsonMap['user'] = username!;
+      jsonMap['username'] = username!;
     }
     return jsonMap;
   }

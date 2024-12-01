@@ -9,6 +9,7 @@ import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
 import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
+import 'package:groq_sdk/utils/groq_parser.dart';
 
 class GroqChatSettings {
   ///Conversational memory length. \
@@ -113,14 +114,14 @@ class GroqChatSettings {
 }
 
 class GroqChat {
-  String _model;
-  final String _apiKey;
-  final List<GroqConversationItem> _conversationItems = [];
-  GroqChatSettings _settings;
+  late String _model;
+  late String _apiKey;
+  List<GroqConversationItem> _conversationItems = [];
+  late GroqChatSettings _settings;
   GroqRateLimitInformation? _rateLimitInfo;
   final StreamController<ChatEvent> _streamController =
       StreamController.broadcast();
-  final List<GroqToolItem> _registeredTools = [];
+  List<GroqToolItem> _registeredTools = [];
 
   ///GroqChat constructor
   ///[model] the model id
@@ -372,5 +373,51 @@ class GroqChat {
     _conversationItems.add(item);
     _streamController.add(ResponseChatEvent(response, usage));
     return (response, usage);
+  }
+
+  /// Converts the `GroqChat` object into a JSON-compatible `Map<String, dynamic>`.
+  ///
+  /// This method serializes the `GroqChat` instance into a JSON object by
+  /// converting its fields to key-value pairs that are compatible with JSON.
+  Map<String, dynamic> toJson() {
+    return {
+      'model': _model,
+      'apiKey': _apiKey,
+      'settings': _settings.toJson(),
+      'conversationItems': _conversationItems.map((e) => e.toJson()).toList(),
+      'rateLimitInfo': _rateLimitInfo?.toJson(),
+      'registeredTools': _registeredTools.map((e) => e.toChatJson()).toList(),
+    };
+  }
+
+  /// Creates a `GroqChat` instance from a JSON object.
+  ///
+  /// This factory constructor initializes a `GroqChat` object by deserializing
+  /// the provided JSON data. The function `functionNameToFunction` is used to
+  /// map string identifiers in the JSON to their corresponding function objects.
+  /// The parameter given in the `functionNameToFunction` is the function name, which is used in the `GroqToolItem`.
+  /// Enabling the proper deserialization of registered tools.
+  /// Example:
+  /// ```dart
+  ///  var groqChat = GroqChat.fromJson(json, (name) {
+  ///   if (name == 'exampleFunction') return exampleFunction;
+  ///   if (name == 'anotherFunction') return anotherFunction;
+  ///   throw ArgumentError('Unknown function name: $name');
+  /// });
+  /// ```
+  GroqChat.fromJson(Map<String, dynamic> json,
+      Function(Map<String, dynamic>) Function(String) functionNameToFunction) {
+    _model = json['model'] as String;
+    _apiKey = json['apiKey'] as String;
+    _settings = GroqParser.settignsFromJson(json['settings']);
+    _conversationItems = (json['conversationItems'] as List)
+        .map((item) => GroqParser.groqConversationItemFromJson(item))
+        .toList();
+    _rateLimitInfo =
+        GroqParser.rateLimitInformationFromJson(json['rateLimitInfo']);
+    _registeredTools = (json['registeredTools'] as List)
+        .map((item) =>
+            GroqParser.groqToolItemFromChatJson(item, functionNameToFunction))
+        .toList();
   }
 }

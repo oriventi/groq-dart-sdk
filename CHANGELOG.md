@@ -1,3 +1,7 @@
+## 0.2.1
+
+- added possibility to store and load a chat in json format
+
 ## 0.2.0
 
 - added tool use functionality

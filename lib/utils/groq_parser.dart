@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:groq_sdk/groq_sdk.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
@@ -49,6 +50,61 @@ class GroqParser {
     );
   }
 
+  static GroqConversationItem groqConversationItemFromJson(
+      Map<String, dynamic> json) {
+    return GroqConversationItem(
+      json['model'] as String,
+      groqMessageFromJson(json['request'] as Map<String, dynamic>),
+    )
+      ..response = json['response'] == null
+          ? null
+          : groqResponseFromJson(json['response'] as Map<String, dynamic>)
+      ..usage = json['usage'] == null
+          ? null
+          : groqUsageFromJson(json['usage'] as Map<String, dynamic>);
+  }
+
+  static GroqChatSettings settignsFromJson(Map<String, dynamic> json) {
+    return GroqChatSettings(
+      temperature: json['temperature'] as double,
+      maxTokens: json['max_tokens'] as int,
+      topP: json['top_p'] as double,
+      stop: json['stop'] as String?,
+    );
+  }
+
+  static GroqToolParameterType groqToolParameterTypeFromString(String type) {
+    switch (type) {
+      case 'string':
+        return GroqToolParameterType.string;
+      case 'number':
+        return GroqToolParameterType.number;
+      case 'boolean':
+        return GroqToolParameterType.boolean;
+      default:
+        return GroqToolParameterType.string;
+    }
+  }
+
+  static GroqToolItem groqToolItemFromChatJson(Map<String, dynamic> json,
+      Function(Map<String, dynamic>) Function(String) functionNameToFunction) {
+    return GroqToolItem(
+      function: functionNameToFunction(json['functionName'] as String),
+      functionName: json['functionName'] as String,
+      functionDescription: json['functionDescription'] as String,
+      parameters: (json['parameters'] as List)
+          .map((item) => GroqToolParameter(
+                parameterName: item['name'] as String,
+                parameterDescription: item['description'] as String,
+                parameterType:
+                    groqToolParameterTypeFromString(item['type'] as String),
+                isRequired: item['isRequired'] as bool,
+                allowedValues: item['allowedValues'] as List<String>,
+              ))
+          .toList(),
+    );
+  }
+
   static GroqToolCall groqToolCallFromJson(Map<String, dynamic> json) {
     print(json.toString());
     return GroqToolCall(
@@ -75,15 +131,6 @@ class GroqParser {
     );
   }
 
-  ///Parses the choice information from the json
-  static GroqChoice groqChoiceFromJson(Map<String, dynamic> json) {
-    return GroqChoice(
-      messageData: GroqParser.groqMessageFromJson(json["message"]),
-      finishReason: json['finish_reason'] as String?,
-    );
-  }
-
-  ///Parses the response information from the json
   static GroqResponse groqResponseFromJson(Map<String, dynamic> json) {
     return GroqResponse(
       id: json['id'] as String,
@@ -98,16 +145,44 @@ class GroqParser {
     );
   }
 
-  ///Parses the usage information from the json
-  static GroqUsage groqUsageFromChatJson(Map<String, dynamic> json) {
+  static GroqRateLimitInformation rateLimitInformationFromJson(
+      Map<String, dynamic> json) {
+    return GroqRateLimitInformation(
+      totalRequestsPerDay: json['totalRequestsPerDay'] as int,
+      remainingRequestsToday: json['remainingRequestsToday'] as int,
+      totalTokensPerMinute: json['totalTokensPerMinute'] as int,
+      remainingTokensThisMinute: json['remainingTokensThisMinute'] as int,
+    );
+  }
+
+  static GroqUsage usagefromJson(Map<String, dynamic> json) {
     return GroqUsage(
-      promptTokens: json['prompt_tokens'] as int,
-      completionTokens: json['completion_tokens'] as int,
+      promptTokens: json['promptTokens'] as int,
+      completionTokens: json['completionTokens'] as int,
+      promptTime: Duration(milliseconds: json['promptTime'] as int),
+      completionTime: Duration(milliseconds: json['completionTime'] as int),
+    );
+  }
+
+  ///Parses the choice information from the json
+  static GroqChoice groqChoiceFromJson(Map<String, dynamic> json) {
+    return GroqChoice(
+      messageData: GroqParser.groqMessageFromJson(json["message"]),
+      finishReason: json['finish_reason'] as String?,
+    );
+  }
+
+  ///Parses the usage information from the json
+  static GroqUsage groqUsageFromJson(Map<String, dynamic> json) {
+    return GroqUsage(
+      promptTokens: json['prompt_tokens'] as int? ?? 0,
+      completionTokens: json['completion_tokens'] as int? ?? 0,
       // it is stored in json as 0.001 seconds e.g.
       promptTime: Duration(
-          milliseconds: ((json['prompt_time'] as double) * 1000).toInt()),
+          milliseconds: ((json['prompt_time'] as double? ?? 0) * 1000).toInt()),
       completionTime: Duration(
-          milliseconds: ((json['completion_time'] as double) * 1000).toInt()),
+          milliseconds:
+              ((json['completion_time'] as double? ?? 0) * 1000).toInt()),
     );
   }
 

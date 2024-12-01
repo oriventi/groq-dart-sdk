@@ -159,7 +159,6 @@ class Groq {
     if (answerString.contains("unsafe")) {
       isHarmful = true;
       final List<String> answerList = answerString.trim().split('\n');
-      print(answerList.toString());
       if (answerList.length < 2) {
         throw GroqException(
             statusCode: 400,

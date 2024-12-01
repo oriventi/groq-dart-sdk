@@ -90,7 +90,7 @@ class GroqApi {
       final GroqResponse groqResponse =
           GroqParser.groqResponseFromJson(jsonData);
       final GroqUsage groqUsage =
-          GroqParser.groqUsageFromChatJson(jsonData["usage"]);
+          GroqParser.groqUsageFromJson(jsonData["usage"]);
       return (groqResponse, groqUsage, rateLimitInfo);
     } else if (response.statusCode == 429) {
       throw GroqRateLimitException(
