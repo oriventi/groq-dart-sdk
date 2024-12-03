@@ -1,3 +1,10 @@
+## 0.2.3
+
+- enhanced message structure
+- added addMessageWithoutSending() for better assistant message handling
+- removed llama32-90b-text-preview model
+- deprecated allMessages and GroqConversationItem
+
 ## 0.2.2
 
 - improved static analysis
