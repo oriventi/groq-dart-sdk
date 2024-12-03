@@ -3,7 +3,7 @@ import 'package:groq_sdk/groq_sdk.dart';
 void main(List<String> arguments) async {
   final groq = Groq('YOU_API_KEY');
 
-  //Checking model availability
+  // //Checking model availability
   if (!await groq.canUseModel(GroqModels.whisper_large_v3)) {
     print('Cannot use model');
     return;
@@ -11,7 +11,8 @@ void main(List<String> arguments) async {
 
   //Sending an audio file for transcription
   final (response, rateLimitInfo) = await groq.transcribeAudio(
-      audioFileUrl: 'res/audio.m4a', modelId: GroqModels.whisper_large_v3);
+      audioFileUrl: 'res/audio.m4a',
+      modelId: GroqModels.distil_whisper_large_v3_en);
 
   //Printing some received information
   print('Transcription: ${response.text}');

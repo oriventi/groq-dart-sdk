@@ -1,3 +1,7 @@
+## 0.2.4
+
+- fixed typo in groq models
+
 ## 0.2.3
 
 - enhanced message structure

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:groq_sdk/models/chat_event.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
-import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
@@ -53,19 +52,19 @@ class GroqParser {
     );
   }
 
-  static GroqConversationItem groqConversationItemFromJson(
-      Map<String, dynamic> json) {
-    return GroqConversationItem(
-      json['model'] as String,
-      groqMessageFromJson(json['request'] as Map<String, dynamic>),
-    )
-      ..response = json['response'] == null
-          ? null
-          : groqResponseFromJson(json['response'] as Map<String, dynamic>)
-      ..usage = json['usage'] == null
-          ? null
-          : groqUsageFromJson(json['usage'] as Map<String, dynamic>);
-  }
+  // static GroqConversationItem groqConversationItemFromJson(
+  //     Map<String, dynamic> json) {
+  //   return GroqConversationItem(
+  //     json['model'] as String,
+  //     groqMessageFromJson(json['request'] as Map<String, dynamic>),
+  //   )
+  //     ..response = json['response'] == null
+  //         ? null
+  //         : groqResponseFromJson(json['response'] as Map<String, dynamic>)
+  //     ..usage = json['usage'] == null
+  //         ? null
+  //         : groqUsageFromJson(json['usage'] as Map<String, dynamic>);
+  // }
 
   static GroqChatSettings settignsFromJson(Map<String, dynamic> json) {
     return GroqChatSettings(

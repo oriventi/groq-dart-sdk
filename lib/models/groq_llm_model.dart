@@ -17,7 +17,7 @@ const String whisper_large_v3 = 'whisper-large-v3';
 class GroqModels {
   static const String whisper_large_v3 = 'whisper-large-v3';
   static const String distil_whisper_large_v3_en = 'distil-whisper-large-v3-en';
-  static const String whisper_large_v2_turbo = 'whisper-large-v3-turbo';
+  static const String whisper_large_v3_turbo = 'whisper-large-v3-turbo';
   static const String mixtral8_7b = 'mixtral-8x7b-32768';
   static const String gemma_7b = 'gemma-7b-it';
   static const String gemma2_9b = 'gemma2-9b-it';

@@ -114,6 +114,7 @@ extension GroqResponseExtension on GroqResponse {
   }
 }
 
+// ignore: deprecated_member_use_from_same_package
 extension GroqConversationItemExtension on GroqConversationItem {
   void setResponse(GroqResponse response, GroqUsage usage) {
     this.response = response;
