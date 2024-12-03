@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:groq_sdk/extensions/groq_json_extensions.dart';
+import 'package:groq_sdk/models/chat_event.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
-import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_exceptions.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
 import 'package:groq_sdk/models/groq_message.dart';
@@ -59,14 +59,18 @@ class GroqApi {
   }) async {
     final Map<String, dynamic> jsonMap = {};
     List<Map<String, dynamic>> messages = [];
-    List<GroqConversationItem> allMessages = chat.allMessages;
-    if (chat.allMessages.length > chat.settings.maxConversationalMemoryLength) {
+    List<ChatEvent> allMessages = chat.messages;
+    if (allMessages.length > chat.settings.maxConversationalMemoryLength) {
       allMessages.removeRange(
           0, allMessages.length - chat.settings.maxConversationalMemoryLength);
     }
     for (final message in allMessages) {
-      messages.add(message.request.toJson());
-      messages.add(message.response!.choices.first.messageData.toJson());
+      message.when(
+          request: (req) => messages.add(req.message.toJson()),
+          response: (res) =>
+              messages.add(res.response.choices.first.messageData.toJson()));
+      // messages.add(message.request.toJson());
+      // messages.add(message.response!.choices.first.messageData.toJson());
     }
     messages.add(prompt.toJson());
     jsonMap['messages'] = messages;

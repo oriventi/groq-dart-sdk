@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:groq_sdk/models/chat_event.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
@@ -144,6 +145,16 @@ class GroqParser {
           .toList(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['created'] as int,
           isUtc: true),
+    );
+  }
+
+  static ChatEvent chatEventFromJson(Map<String, dynamic> json) {
+    if (json['type'] == 'request') {
+      return RequestChatEvent(GroqParser.groqMessageFromJson(json['message']));
+    }
+    return ResponseChatEvent(
+      GroqParser.groqResponseFromJson(json['message']),
+      GroqParser.groqUsageFromJson(json['usage']),
     );
   }
 

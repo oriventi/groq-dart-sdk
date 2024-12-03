@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:groq_sdk/models/chat_event.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_conversation_item.dart';
 import 'package:groq_sdk/models/groq_message.dart';
@@ -18,6 +19,28 @@ extension GroqChatSettingsExtension on GroqChatSettings {
       // 'unknown': choicesCount,
       // 'stream': stream,
       'stop': stop,
+    };
+  }
+}
+
+extension ChatEventExtension on ChatEvent {
+  Map<String, dynamic> toJson() {
+    if (this is RequestChatEvent) {
+      return {
+        'type': 'request',
+        'message': (this as RequestChatEvent).message.toJson(),
+      };
+    } else if (this is ResponseChatEvent) {
+      final res = this as ResponseChatEvent;
+      return {
+        'type': 'response',
+        'message': res.response.toJson(),
+        'usage': res.usage.toJson(),
+      };
+    }
+
+    return {
+      'type': 'undefined',
     };
   }
 }

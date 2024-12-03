@@ -116,7 +116,10 @@ class GroqChatSettings {
 class GroqChat {
   late String _model;
   late String _apiKey;
-  List<GroqConversationItem> _conversationItems = [];
+
+  @Deprecated("GroqConversationItem is deprecated, use GroqChatItem instead")
+  final List<GroqConversationItem> _conversationItems = [];
+  List<ChatEvent> _chatItems = [];
   late GroqChatSettings _settings;
   GroqRateLimitInformation? _rateLimitInfo;
   final StreamController<ChatEvent> _streamController =
@@ -183,8 +186,10 @@ class GroqChat {
   // returns a list of all messages in the conversation
   // it is a list of GroqMessage objects and switches from request to response
 
+  @Deprecated("allMessages is deprecated, use messages instead")
+
   ///Returns a list of all messages in the conversation
-  ///It is a list of GroqMessage objects and switches from request to response
+  ///It is a list of GroqConversationItem objects and switches from request to response
   ///Example:
   ///```dart
   ///final conversation = chat.allMessages;
@@ -192,6 +197,12 @@ class GroqChat {
   ///print(conversation.first.response.choices.first.message); //prints the first response in the conversation
   ///```
   List<GroqConversationItem> get allMessages => _conversationItems;
+
+  ///Returns a list of all messages in the conversation
+  ///It is a list of ChatEvents, which can either be requests or responses
+  List<ChatEvent> get messages => _chatItems;
+
+  @Deprecated("Use userMessageContents instead")
 
   ///Returns a list of all messages content in the conversation
   ///It is a list of strings and switches from request to response
@@ -207,6 +218,30 @@ class GroqChat {
       messages.add(item.request.content);
       if (item.response != null) {
         messages.add(item.response!.choices.first.message);
+      }
+    }
+    return messages;
+  }
+
+  ///Returns a List of Strings of all messages between the user and the model
+  ///Assistant messages and tool use messages are not included
+  ///Example:
+  ///```dart
+  ///final messages = chat.userMessageContent;
+  ///print(messages.first); //prints the first user message in the conversation
+  ///```
+  List<String> get userMessageContents {
+    List<String> messages = [];
+    for (final item in _chatItems) {
+      if (item is RequestChatEvent) {
+        if (item.message.role == GroqMessageRole.user) {
+          messages.add(item.message.content);
+        }
+      } else if (item is ResponseChatEvent) {
+        if (item.response.choices.isNotEmpty &&
+            !item.response.choices.first.messageData.isToolCall) {
+          messages.add(item.response.choices.first.message);
+        }
       }
     }
     return messages;
@@ -309,14 +344,16 @@ class GroqChat {
   ///final response = chat.latestResponse;
   ///print(response.choices.first.message); //prints the latest response in the conversation
   ///```
-  GroqResponse? get latestResponse => _conversationItems.last.response;
+  GroqResponse? get latestResponse =>
+      _chatItems.whereType<ResponseChatEvent>().lastOrNull?.response;
 
   ///Returns the latest resource usage in the conversation
   ///```dart
   ///final usage = chat.latestUsage;
   ///print(usage.totalTokens); //prints the total tokens used in the latest response
   ///```
-  GroqUsage? get latestUsage => _conversationItems.last.usage;
+  GroqUsage? get latestUsage =>
+      _chatItems.whereType<ResponseChatEvent>().lastOrNull?.usage;
 
   ///Returns the total tokens used in the conversation
   ///```dart
@@ -324,11 +361,31 @@ class GroqChat {
   ///print(totalTokens); //prints the total tokens used in the conversation
   ///```
   int get totalTokens {
-    if (_conversationItems.isEmpty) return 0;
-    return _conversationItems.fold(
-        0,
-        (previousValue, element) =>
-            previousValue + (element.usage?.totalTokens ?? 0));
+    if (_chatItems.isEmpty) return 0;
+    return _chatItems.fold(0, (previousValue, element) {
+      if (element is RequestChatEvent) {
+        return previousValue;
+      }
+
+      return previousValue + ((element as ResponseChatEvent).usage.totalTokens);
+    });
+  }
+
+  ///Adds a new message to the chat without sending it to the model or expecting a response.
+  ///This is useful for assistant messages or passive instructions to the model.
+  ///[prompt] the message content
+  ///[role] the message role, usually assistant
+  ///Example:
+  ///```dart
+  ///chat.addMessageWithoutSending('You are a chatbot for a software support service.', role: GroqMessageRole.assistant);
+  ///```
+  void addMessageWithoutSending(
+    String prompt, {
+    GroqMessageRole role = GroqMessageRole.assistant,
+  }) {
+    final request = GroqMessage(content: prompt, role: role);
+    _chatItems.add(RequestChatEvent(request));
+    _conversationItems.add(GroqConversationItem(_model, request));
   }
 
   ///Sends a new request message to the chat
@@ -353,6 +410,7 @@ class GroqChat {
     final request =
         GroqMessage(content: prompt, role: role, username: username);
     _streamController.add(RequestChatEvent(request));
+    _chatItems.add(RequestChatEvent(request));
     final item = GroqConversationItem(_model, request);
     GroqResponse response;
     GroqUsage usage;
@@ -370,6 +428,7 @@ class GroqChat {
     }
     _rateLimitInfo = rateLimitInfo;
     item.setResponse(response, usage);
+    _chatItems.add(ResponseChatEvent(response, usage));
     _conversationItems.add(item);
     _streamController.add(ResponseChatEvent(response, usage));
     return (response, usage);
@@ -384,7 +443,7 @@ class GroqChat {
       'model': _model,
       'apiKey': _apiKey,
       'settings': _settings.toJson(),
-      'conversationItems': _conversationItems.map((e) => e.toJson()).toList(),
+      'chatItems': _chatItems.map((e) => e.toJson()).toList(),
       'rateLimitInfo': _rateLimitInfo?.toJson(),
       'registeredTools': _registeredTools.map((e) => e.toChatJson()).toList(),
     };
@@ -410,9 +469,16 @@ class GroqChat {
     _model = json['model'] as String;
     _apiKey = json['apiKey'] as String;
     _settings = GroqParser.settignsFromJson(json['settings']);
-    _conversationItems = (json['conversationItems'] as List)
-        .map((item) => GroqParser.groqConversationItemFromJson(item))
+    _chatItems = (json['chatItems'] as List<Map<String, dynamic>>)
+        .map((item) => GroqParser.chatEventFromJson(item))
         .toList();
+    for (final item in _chatItems) {
+      if (item is RequestChatEvent) {
+        _conversationItems.add(GroqConversationItem(_model, item.message));
+      } else if (item is ResponseChatEvent) {
+        _conversationItems.last.setResponse(item.response, item.usage);
+      }
+    }
     _rateLimitInfo =
         GroqParser.rateLimitInformationFromJson(json['rateLimitInfo']);
     _registeredTools = (json['registeredTools'] as List)
