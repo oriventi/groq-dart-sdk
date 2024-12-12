@@ -1,3 +1,7 @@
+## 0.2.5
+
+- added llama3.3 models as constants
+
 ## 0.2.4
 
 - fixed typo in groq models
