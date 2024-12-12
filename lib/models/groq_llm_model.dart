@@ -23,6 +23,8 @@ class GroqModels {
   static const String gemma2_9b = 'gemma2-9b-it';
   static const String llama3_8b = 'llama3-8b-8192';
   static const String llama3_70b = 'llama3-70b-8192';
+  @Deprecated(
+      'Will be removed soon by Groq, use GroqModels.llama33_70b_versatile`instead')
   static const String llama31_70b_versatile = 'llama-3.1-70b-versatile';
   static const String llama31_8b_instant = 'llama-3.1-8b-instant';
   static const String llama3_groq_70b_tool_use_preview =
@@ -36,6 +38,8 @@ class GroqModels {
       'llama-3.2-11b-vision-preview';
   static const String llama_32_90b_vision_preview =
       'llama-3.2-90b-vision-preview';
+  static const String llama33_70b_versatile = 'llama-3.3-70b-versatile';
+  static const String llama33_70b_specdec = 'llama-3.3-70b-specdec';
 }
 
 class GroqLLMModel {
