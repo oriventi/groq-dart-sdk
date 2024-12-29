@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches:
       - master
   workflow_dispatch:
@@ -42,3 +42,20 @@ jobs:
       # Analyze the code
       - name: Dart Analyze
         run: dart analyze
+
+      # Run Tests
+      - name: Run Tests with API Key
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          dart pub global activate coverage
+          dart test --coverage=coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --report-on=lib
+
+      # Upload test coverage reports (optional)
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ${{ github.repository }}
+          fail_ci_if_error: true
