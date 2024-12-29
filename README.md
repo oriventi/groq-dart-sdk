@@ -293,6 +293,13 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://tempo-riz.github.io"><img src="https://avatars.githubusercontent.com/u/64015162?v=4?s=100" width="100px;" alt="Thibault Chatillon"/><br /><sub><b>Thibault Chatillon</b></sub></a><br /><a href="#code-tempo-riz" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
