@@ -495,8 +495,9 @@ class GroqChat {
     _model = json['model'] as String;
     _apiKey = json['apiKey'] as String;
     _settings = GroqParser.settignsFromJson(json['settings']);
-    _chatItems = (json['chatItems'] as List<Map<String, dynamic>>)
-        .map((item) => GroqParser.chatEventFromJson(item))
+    _chatItems = (json['chatItems'] as List<dynamic>)
+        .map((item) =>
+            GroqParser.chatEventFromJson(item as Map<String, dynamic>))
         .toList();
     for (final item in _chatItems) {
       if (item is RequestChatEvent) {

@@ -1,3 +1,8 @@
+## 1.0.2
+
+- added badges to README.md
+- fixed fromJson bug
+
 ## 1.0.1
 
 - added `addMessageWithoutSending` to docs
