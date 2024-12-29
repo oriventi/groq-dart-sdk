@@ -16,6 +16,24 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "tempo-riz",
+      "name": "Thibault Chatillon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64015162?v=4",
+      "profile": "https://tempo-riz.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "dayveedaniel",
+      "name": "David Daniel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47108741?v=4",
+      "profile": "https://github.com/dayveedaniel",
+      "contributions": [
+        "bug"
+      ]
     }
   ]
 }

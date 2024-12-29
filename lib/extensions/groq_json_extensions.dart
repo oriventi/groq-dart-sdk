@@ -8,7 +8,6 @@ import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
 import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
-import 'package:groq_sdk/utils/groq_parser.dart';
 
 extension GroqChatSettingsExtension on GroqChatSettings {
   Map<String, dynamic> toJson() {
@@ -121,11 +120,6 @@ extension GroqConversationItemExtension on GroqConversationItem {
     this.usage = usage;
   }
 
-  void setResponseFromJson(Map<String, dynamic> json) {
-    response = GroqParser.groqResponseFromJson(json);
-    usage = GroqParser.groqUsageFromJson(json);
-  }
-
   Map<String, dynamic> toJson() {
     return {
       "model": model,
@@ -137,6 +131,7 @@ extension GroqConversationItemExtension on GroqConversationItem {
 }
 
 extension GroqUsageExtension on GroqUsage {
+  ///Corresponds to usageFromJson() in groq_parser.dart, **not** groqUsageFromJson()
   Map<String, dynamic> toJson() {
     return {
       'promptTokens': promptTokens,

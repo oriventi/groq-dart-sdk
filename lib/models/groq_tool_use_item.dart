@@ -126,6 +126,16 @@ class GroqToolItem {
     // Return a callable function
     return () => function(arguments);
   }
+
+  @override
+  int get hashCode => functionName.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GroqToolItem && other.functionName == functionName;
+  }
 }
 
 /// Represents the data type of a Groq tool parameter.
