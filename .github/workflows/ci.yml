@@ -46,7 +46,7 @@ jobs:
 
       # Analyze the code
       - name: Dart Analyze
-        run: dart analyze --no-pub
+        run: dart analyze
 
       # Run Tests
       - name: Run Tests with API Key
