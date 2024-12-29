@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:groq_sdk/extensions/groq_json_extensions.dart';
 import 'package:groq_sdk/models/chat_event.dart';
+import 'package:groq_sdk/models/groq_audio_response.dart';
 import 'package:groq_sdk/models/groq_chat.dart';
 import 'package:groq_sdk/models/groq_exceptions.dart';
 import 'package:groq_sdk/models/groq_llm_model.dart';
-import 'package:groq_sdk/models/groq_message.dart';
 import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
-import 'package:groq_sdk/models/groq_audio_response.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
 import 'package:groq_sdk/utils/auth_http.dart';
 import 'package:groq_sdk/utils/groq_parser.dart';
@@ -53,7 +52,6 @@ class GroqApi {
   static Future<(GroqResponse, GroqUsage, GroqRateLimitInformation)>
       getNewChatCompletion({
     required String apiKey,
-    required GroqMessage prompt,
     required GroqChat chat,
     required bool expectJSON,
   }) async {
@@ -72,7 +70,6 @@ class GroqApi {
       // messages.add(message.request.toJson());
       // messages.add(message.response!.choices.first.messageData.toJson());
     }
-    messages.add(prompt.toJson());
     jsonMap['messages'] = messages;
     jsonMap['model'] = chat.model;
     if (chat.registeredTools.isNotEmpty) {
