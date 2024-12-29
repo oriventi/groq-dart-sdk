@@ -28,4 +28,24 @@ class GroqUsage {
 
   ///Returns the total time taken in the prompt and completion
   Duration get totalTime => promptTime + completionTime;
+
+  @override
+  int get hashCode =>
+      promptTokens.hashCode ^
+      completionTokens.hashCode ^
+      promptTime.hashCode ^
+      completionTime.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is GroqUsage &&
+      other.promptTokens == promptTokens &&
+      other.completionTokens == completionTokens &&
+      other.promptTime == promptTime &&
+      other.completionTime == completionTime;
+
+  @override
+  String toString() {
+    return 'GroqUsage{promptTokens: $promptTokens, completionTokens: $completionTokens, promptTime: $promptTime, completionTime: $completionTime}';
+  }
 }

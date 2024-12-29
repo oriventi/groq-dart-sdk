@@ -23,4 +23,19 @@ class GroqRateLimitInformation {
   String toString() {
     return 'GroqRateLimitInformation{totalRequestsPerDay: $totalRequestsPerDay, remainingRequestsPerDay: $remainingRequestsToday, totalTokensPerMinute: $totalTokensPerMinute, remainingTokensPerMinute: $remainingTokensThisMinute}';
   }
+
+  @override
+  int get hashCode =>
+      totalRequestsPerDay.hashCode ^
+      remainingRequestsToday.hashCode ^
+      totalTokensPerMinute.hashCode ^
+      remainingTokensThisMinute.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is GroqRateLimitInformation &&
+      other.totalRequestsPerDay == totalRequestsPerDay &&
+      other.remainingRequestsToday == remainingRequestsToday &&
+      other.totalTokensPerMinute == totalTokensPerMinute &&
+      other.remainingTokensThisMinute == remainingTokensThisMinute;
 }

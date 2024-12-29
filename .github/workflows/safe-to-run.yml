@@ -1,0 +1,49 @@
+name: PR Secure Checks
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+jobs:
+  secure-checks:
+    if: contains(github.event.pull_request.labels.*.name, 'safe-to-run')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check if labeler is allowed
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const allowedUsers = ['oriventi'];
+            const labeler = context.payload.sender.login;
+            if (!allowedUsers.includes(labeler)) {
+              throw new Error(`User ${labeler} is not allowed to add labels`);
+            }
+
+      # Setup Flutter/Dart with the specific channel
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: dart pub get
+
+      - name: Run Tests with API Key
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          dart pub global activate coverage
+          dart test --coverage=coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --report-on=lib
+
+      # Upload test coverage reports (optional)
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ${{ github.repository }}
+          fail_ci_if_error: true
