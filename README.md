@@ -27,6 +27,7 @@ A powerful Dart client library for interacting with the Groq Cloud API, empoweri
 - **Audio Transcription:** Transcribe audio files into text using Groq's powerful Whisper models.
 - **Audio Translation:** Translate audio files directly into english.
 - **Content Moderation:** Easily check if texts are harmful.
+- **Assistant Messages:** Send assistant messages to the model to guide the conversation.
 
 ## Getting Started
 
@@ -243,6 +244,17 @@ final (isHarmful, harmfulCategory, usage, rateLimit) = await groq.isTextHarmful(
 if (isHarmful) {
   print('Harmful content detected: $harmfulCategory');
 }
+```
+
+### Assistant Messages
+
+Add assistant messages to the chat to guide the conversation. The model will consider the assistant message when generating a response.
+
+```dart
+final chat = groq.startNewChat(GroqModels.llama3_8b);
+chat.addMessageWithoutSending('You are a weather assistant bot.');
+final (response, usage) = await chat.sendMessage('What is the weather in Boston like?');
+print(response.choices.first.message);
 ```
 
 ## Constants
