@@ -18,7 +18,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const allowedUsers = ['owner', 'maintainer', 'collaborator'];
+            const allowedUsers = ['oriventi'];
             const labeler = context.payload.sender.login;
             if (!allowedUsers.includes(labeler)) {
               throw new Error(`User ${labeler} is not allowed to add labels`);
