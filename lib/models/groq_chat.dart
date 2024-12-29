@@ -420,7 +420,6 @@ class GroqChat {
     try {
       (response, usage, rateLimitInfo) = await GroqApi.getNewChatCompletion(
         apiKey: _apiKey,
-        prompt: request,
         chat: this,
         expectJSON: expectJSON,
       );
