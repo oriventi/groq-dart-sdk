@@ -32,9 +32,7 @@ jobs:
 
       # Setup Flutter/Dart with the specific channel
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ matrix.channel }}
+        uses: dart-lang/setup-dart@v1
 
       # Install dependencies
       - name: Install Dependencies
