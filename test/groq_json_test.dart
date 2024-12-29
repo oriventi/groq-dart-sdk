@@ -5,17 +5,6 @@ import 'package:test/test.dart';
 
 void main() {
   group('Groq Json Tests', () {
-    Map<String, dynamic> getWeather(Map<String, dynamic> args) {
-      final location = args['location'] as String;
-      final units = args['units'] as String? ?? 'metric';
-      return {
-        'location': location,
-        'units': units,
-        'temperature': units == 'metric' ? 15 : 59,
-        'description': 'Partly cloudy',
-      };
-    }
-
     test('Groq Chat Settings', () {
       final chatSettings = GroqChatSettings(
         temperature: 0.5,
