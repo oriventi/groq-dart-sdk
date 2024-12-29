@@ -1,12 +1,15 @@
-[![codecov](https://codecov.io/github/oriventi/groq-dart-sdk/graph/badge.svg?token=77DHM8HVL9)](https://codecov.io/github/oriventi/groq-dart-sdk) [![All Contributors](https://img.shields.io/github/all-contributors/oriventi/groq-dart-sdk?color=ee8449&style=flat-square)](#contributors)
-
-<a href="https://groq.com" target="_blank" rel="noopener noreferrer">
-  <img
-    src="https://groq.com/wp-content/uploads/2024/03/PBG-mark1-color.svg"
-    alt="Powered by Groq for fast inference."
-    width="200" height="100"
-  />
-</a>
+<p align="center">
+<a href="https://codecov.io/github/oriventi/groq-dart-sdk"><img src="https://codecov.io/github/oriventi/groq-dart-sdk/graph/badge.svg?token=77DHM8HVL9" alt="codecov"></a>
+<a href="#contributors"><img src="https://img.shields.io/github/all-contributors/oriventi/groq-dart-sdk?color=ee8449&style=flat-square" alt="All Contributors"></a>
+<a href="https://pub.dev/packages/groq_sdk"><img src="https://img.shields.io/badge/platform-dart%20%7C%20flutter-blue" alt="Platform"></a>
+<a href="https://pub.dev/packages/groq_sdk"><img src="https://img.shields.io/pub/v/groq_sdk" alt="Pub Version"></a>
+<a href="https://pub.dev/packages/groq_sdk"><img src="https://img.shields.io/pub/likes/groq_sdk" alt="Pub Likes"></a> 
+<a href=""><img src="https://img.shields.io/github/actions/workflow/status/oriventi/groq-dart-sdk/direct-push.yml" alt="CI"></a>
+<a href="https://img.shields.io/github/license/oriventi/groq-dart-sdk"><img src="https://img.shields.io/github/license/oriventi/groq-dart-sdk?color=red" alt="License"></a>
+</p>
+<p align="center">
+<a href="https://groq.com" target="_blank" rel="noopener noreferrer"><img src="https://groq.com/wp-content/uploads/2024/03/PBG-mark1-color.svg" alt="Powered by Groq for fast inference." width="200" height="100"></a>
+</p>
 
 ## Groq Dart SDK
 
