@@ -296,6 +296,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/oriventi"><img src="https://avatars.githubusercontent.com/u/19863403?v=4?s=100" width="100px;" alt="Adrian Hillebrand"/><br /><sub><b>Adrian Hillebrand</b></sub></a><br /><a href="#code-oriventi" title="Code">💻</a> <a href="#doc-oriventi" title="Documentation">📖</a> <a href="#example-oriventi" title="Examples">💡</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/m41w4r3exe"><img src="https://avatars.githubusercontent.com/u/33025255?v=4?s=100" width="100px;" alt="m41w4r3exe"/><br /><sub><b>m41w4r3exe</b></sub></a><br /><a href="#bug-m41w4r3exe" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://tempo-riz.github.io"><img src="https://avatars.githubusercontent.com/u/64015162?v=4?s=100" width="100px;" alt="Thibault Chatillon"/><br /><sub><b>Thibault Chatillon</b></sub></a><br /><a href="#code-tempo-riz" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dayveedaniel"><img src="https://avatars.githubusercontent.com/u/47108741?v=4?s=100" width="100px;" alt="David Daniel"/><br /><sub><b>David Daniel</b></sub></a><br /><a href="#bug-dayveedaniel" title="Bug reports">🐛</a></td>

@@ -9,6 +9,18 @@
   "contributorsPerLine": 7,
   "contributors": [
     {
+
+      "login": "oriventi",
+      "name": "Adrian Hillebrand",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19863403?v=4",
+      "profile": "https://github.com/oriventi",
+      "contributions": [
+        "code",
+        "doc",
+        "example"
+      ]
+    },
+    {
       "login": "m41w4r3exe",
       "name": "m41w4r3exe",
       "avatar_url": "https://avatars.githubusercontent.com/u/33025255?v=4",
