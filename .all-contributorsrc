@@ -9,6 +9,7 @@
   "contributorsPerLine": 7,
   "contributors": [
     {
+
       "login": "oriventi",
       "name": "Adrian Hillebrand",
       "avatar_url": "https://avatars.githubusercontent.com/u/19863403?v=4",
@@ -17,6 +18,33 @@
         "code",
         "doc",
         "example"
+      ]
+    },
+    {
+      "login": "m41w4r3exe",
+      "name": "m41w4r3exe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33025255?v=4",
+      "profile": "https://github.com/m41w4r3exe",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "tempo-riz",
+      "name": "Thibault Chatillon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64015162?v=4",
+      "profile": "https://tempo-riz.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "dayveedaniel",
+      "name": "David Daniel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47108741?v=4",
+      "profile": "https://github.com/dayveedaniel",
+      "contributions": [
+        "bug"
       ]
     }
   ]

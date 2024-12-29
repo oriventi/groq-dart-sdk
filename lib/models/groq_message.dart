@@ -51,6 +51,20 @@ class GroqMessage {
         ? 'GroqMessage{toolCall: $toolCalls}'
         : 'GroqMessage{content: $content, username: $username, role: $role}';
   }
+
+  @override
+  int get hashCode => content.hashCode ^ role.hashCode ^ isToolCall.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GroqMessage &&
+        other.content == content &&
+        other.role == role &&
+        other.isToolCall == isToolCall &&
+        other.toolCalls == toolCalls;
+  }
 }
 
 class GroqToolCall {
@@ -67,5 +81,20 @@ class GroqToolCall {
   @override
   String toString() {
     return 'GroqToolCall{callId: $callId, functionName: $functionName, arguments: $arguments}';
+  }
+
+  @override
+  int get hashCode =>
+      callId.hashCode ^ functionName.hashCode ^ arguments.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GroqToolCall &&
+        other.callId == callId &&
+        other.functionName == functionName &&
+        arguments.entries
+            .every((entry) => other.arguments[entry.key] == entry.value);
   }
 }
