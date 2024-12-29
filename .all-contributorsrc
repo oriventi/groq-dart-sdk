@@ -1,4 +1,21 @@
 {
   "projectName": "groq-dart-sdk",
-  "projectOwner": "oriventi"
+  "projectOwner": "oriventi",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "m41w4r3exe",
+      "name": "m41w4r3exe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33025255?v=4",
+      "profile": "https://github.com/m41w4r3exe",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ]
 }
