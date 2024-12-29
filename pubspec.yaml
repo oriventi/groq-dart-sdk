@@ -13,9 +13,6 @@ environment:
 dependencies:
   http: ^1.2.1
 
-# assets:
-#   - res/audio.m4a
-
 dev_dependencies:
   coverage: ^1.11.1
   lints: ^3.0.0

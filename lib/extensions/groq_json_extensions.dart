@@ -123,7 +123,7 @@ extension GroqConversationItemExtension on GroqConversationItem {
 
   void setResponseFromJson(Map<String, dynamic> json) {
     response = GroqParser.groqResponseFromJson(json);
-    usage = GroqParser.groqUsageFromJson(json);
+    usage = GroqParser.usagefromJson(json);
   }
 
   Map<String, dynamic> toJson() {
@@ -137,6 +137,7 @@ extension GroqConversationItemExtension on GroqConversationItem {
 }
 
 extension GroqUsageExtension on GroqUsage {
+  ///Corresponds to usageFromJson() in groq_parser.dart, **not** groqUsageFromJson()
   Map<String, dynamic> toJson() {
     return {
       'promptTokens': promptTokens,

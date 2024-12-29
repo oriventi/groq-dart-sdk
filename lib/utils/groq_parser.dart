@@ -52,20 +52,6 @@ class GroqParser {
     );
   }
 
-  // static GroqConversationItem groqConversationItemFromJson(
-  //     Map<String, dynamic> json) {
-  //   return GroqConversationItem(
-  //     json['model'] as String,
-  //     groqMessageFromJson(json['request'] as Map<String, dynamic>),
-  //   )
-  //     ..response = json['response'] == null
-  //         ? null
-  //         : groqResponseFromJson(json['response'] as Map<String, dynamic>)
-  //     ..usage = json['usage'] == null
-  //         ? null
-  //         : groqUsageFromJson(json['usage'] as Map<String, dynamic>);
-  // }
-
   static GroqChatSettings settignsFromJson(Map<String, dynamic> json) {
     return GroqChatSettings(
       temperature: json['temperature'] as double,
@@ -153,7 +139,7 @@ class GroqParser {
     }
     return ResponseChatEvent(
       GroqParser.groqResponseFromJson(json['message']),
-      GroqParser.groqUsageFromJson(json['usage']),
+      GroqParser.usagefromJson(json['usage']),
     );
   }
 
@@ -191,9 +177,9 @@ class GroqParser {
       completionTokens: json['completion_tokens'] as int? ?? 0,
       // it is stored in json as 0.001 seconds e.g.
       promptTime: Duration(
-          milliseconds: ((json['prompt_time'] as double? ?? 0) * 1000).toInt()),
+          microseconds: ((json['prompt_time'] as double? ?? 0) * 1000).toInt()),
       completionTime: Duration(
-          milliseconds:
+          microseconds:
               ((json['completion_time'] as double? ?? 0) * 1000).toInt()),
     );
   }

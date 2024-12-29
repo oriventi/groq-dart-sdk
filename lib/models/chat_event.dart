@@ -22,6 +22,12 @@ sealed class ChatEvent {
     required T Function(RequestChatEvent) request,
     required T Function(ResponseChatEvent) response,
   });
+
+  @override
+  int get hashCode;
+
+  @override
+  bool operator ==(Object other);
 }
 
 ///Is the type received by the chat stream \
@@ -44,6 +50,16 @@ class RequestChatEvent extends ChatEvent {
     required T Function(ResponseChatEvent) response,
   }) {
     return request(this);
+  }
+
+  @override
+  int get hashCode => message.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is RequestChatEvent && other.message == message;
   }
 }
 
@@ -69,6 +85,23 @@ class ResponseChatEvent extends ChatEvent {
     required T Function(ResponseChatEvent) response,
   }) {
     return response(this);
+  }
+
+  @override
+  int get hashCode => response.hashCode ^ usage.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ResponseChatEvent &&
+        other.response == response &&
+        other.usage == usage;
+  }
+
+  @override
+  String toString() {
+    return 'ResponseChatEvent{response: $response, usage: $usage}';
   }
 }
 

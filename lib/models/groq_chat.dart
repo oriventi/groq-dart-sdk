@@ -113,6 +113,26 @@ class GroqChatSettings {
           maxConversationalMemoryLength ?? this.maxConversationalMemoryLength,
     );
   }
+
+  @override
+  int get hashCode =>
+      temperature.hashCode ^
+      maxTokens.hashCode ^
+      topP.hashCode ^
+      stop.hashCode ^
+      maxConversationalMemoryLength.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GroqChatSettings &&
+        other.temperature == temperature &&
+        other.maxTokens == maxTokens &&
+        other.topP == topP &&
+        other.stop == stop &&
+        other.maxConversationalMemoryLength == maxConversationalMemoryLength;
+  }
 }
 
 class GroqChat {
@@ -284,6 +304,11 @@ class GroqChat {
   /// chat.registerTool(weatherTool);
   ///```
   void registerTool(GroqToolItem tool) {
+    //assert that the tool is not already registered
+    assert(
+        !_registeredTools
+            .any((element) => element.functionName == tool.functionName),
+        'Tool with the name ${tool.functionName} is already registered');
     _registeredTools.add(tool);
   }
 
@@ -480,8 +505,11 @@ class GroqChat {
         _conversationItems.last.setResponse(item.response, item.usage);
       }
     }
-    _rateLimitInfo =
-        GroqParser.rateLimitInformationFromJson(json['rateLimitInfo']);
+    if (json['rateLimitInfo'] != null) {
+      _rateLimitInfo =
+          GroqParser.rateLimitInformationFromJson(json['rateLimitInfo']);
+    }
+
     _registeredTools = (json['registeredTools'] as List)
         .map((item) =>
             GroqParser.groqToolItemFromChatJson(item, functionNameToFunction))

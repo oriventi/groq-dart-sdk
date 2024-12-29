@@ -35,6 +35,20 @@ class GroqChoice {
   ///print(choice.message); //prints the message of the choice
   ///```
   String get message => messageData.content;
+
+  @override
+  int get hashCode => messageData.hashCode ^ finishReason.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is GroqChoice &&
+      other.messageData == messageData &&
+      other.finishReason == finishReason;
+
+  @override
+  String toString() {
+    return 'GroqChoice{messageData: $messageData, finishReason: $finishReason}';
+  }
 }
 
 class GroqResponse {
@@ -57,4 +71,19 @@ class GroqResponse {
     required this.choices,
     required this.createdAt,
   });
+
+  @override
+  int get hashCode => id.hashCode ^ choices.hashCode ^ createdAt.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is GroqResponse &&
+      other.id == id &&
+      other.choices == choices &&
+      other.createdAt.millisecond == createdAt.millisecond;
+
+  @override
+  String toString() {
+    return 'GroqResponse{id: $id, choices: $choices, createdAt: $createdAt}';
+  }
 }
