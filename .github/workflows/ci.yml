@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-pub-cache-
 
       # Setup Flutter/Dart with the specific channel
-      - name: Setup Flutter
+      - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
       # Install dependencies

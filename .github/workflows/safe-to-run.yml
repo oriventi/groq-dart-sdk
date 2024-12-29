@@ -24,6 +24,14 @@ jobs:
               throw new Error(`User ${labeler} is not allowed to add labels`);
             }
 
+      # Setup Flutter/Dart with the specific channel
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: dart pub get
+
       - name: Run Tests with API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
