@@ -1,3 +1,11 @@
+## 1.0.0
+
+- deprecated models
+- fixed duplicated message error
+- chore: added tests
+
+Thanks to dayveedaniel for contributing.
+
 ## 0.2.5
 
 - added llama3.3 models as constants

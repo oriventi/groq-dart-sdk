@@ -27,8 +27,12 @@ class GroqModels {
       'Will be removed soon by Groq, use GroqModels.llama33_70b_versatile`instead')
   static const String llama31_70b_versatile = 'llama-3.1-70b-versatile';
   static const String llama31_8b_instant = 'llama-3.1-8b-instant';
+  @Deprecated(
+      'Will be removed soon by Groq, use `GroqModels.llama33_70b_versatile` instead')
   static const String llama3_groq_70b_tool_use_preview =
       'llama3-groq-70b-8192-tool-use-preview';
+  @Deprecated(
+      'Will be removed soon by Groq, use `GroqModels.llama33_70b_versatile` instead')
   static const String llama3_groq_8b_tool_use_preview =
       'llama3-groq-8b-8192-tool-use-preview';
   static const String llama_guard_3_8b = 'llama-guard-3-8b';
