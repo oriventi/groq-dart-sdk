@@ -1,4 +1,4 @@
-![Codecov](https://codecov.io/gh/oriventi/groq-dart-sdk/branch/main/graph/badge.svg) [![All Contributors](https://img.shields.io/github/all-contributors/oriventi/groq-dart-sdk?color=ee8449&style=flat-square)](#contributors)
+[![codecov](https://codecov.io/github/oriventi/groq-dart-sdk/graph/badge.svg?token=77DHM8HVL9)](https://codecov.io/github/oriventi/groq-dart-sdk) [![All Contributors](https://img.shields.io/github/all-contributors/oriventi/groq-dart-sdk?color=ee8449&style=flat-square)](#contributors)
 
 <a href="https://groq.com" target="_blank" rel="noopener noreferrer">
   <img

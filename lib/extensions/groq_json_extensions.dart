@@ -8,7 +8,6 @@ import 'package:groq_sdk/models/groq_rate_limit_information.dart';
 import 'package:groq_sdk/models/groq_response.dart';
 import 'package:groq_sdk/models/groq_tool_use_item.dart';
 import 'package:groq_sdk/models/groq_usage.dart';
-import 'package:groq_sdk/utils/groq_parser.dart';
 
 extension GroqChatSettingsExtension on GroqChatSettings {
   Map<String, dynamic> toJson() {
@@ -119,11 +118,6 @@ extension GroqConversationItemExtension on GroqConversationItem {
   void setResponse(GroqResponse response, GroqUsage usage) {
     this.response = response;
     this.usage = usage;
-  }
-
-  void setResponseFromJson(Map<String, dynamic> json) {
-    response = GroqParser.groqResponseFromJson(json);
-    usage = GroqParser.usagefromJson(json);
   }
 
   Map<String, dynamic> toJson() {
