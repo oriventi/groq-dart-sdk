@@ -1,3 +1,7 @@
+## 1.0.1
+
+- added `addMessageWithoutSending` to docs
+
 ## 1.0.0
 
 - deprecated models
