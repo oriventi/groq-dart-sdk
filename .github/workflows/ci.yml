@@ -49,7 +49,7 @@ jobs:
       # Run Tests
       - name: Run Tests with API Key
         env:
-          API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           dart pub global activate coverage
           dart test --coverage=coverage
