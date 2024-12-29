@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, dev]
+
+    steps:
+      # Check out the repository
+      - uses: actions/checkout@v2
+
+      # Cache dependencies for Dart
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ matrix.channel }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      # Setup Flutter/Dart with the specific channel
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.channel }}
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: dart pub get
+
+      # Format check
+      - name: Dart Format Check
+        run: dart format -o none --set-exit-if-changed .
+
+      # Analyze the code
+      - name: Dart Analyze
+        run: dart analyze --no-pub
+
+      # Run Tests
+      - name: Run Tests with API Key
+        env:
+          API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          dart pub global activate coverage
+          dart test --coverage=coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.packages --report-on=lib
+
+      # Upload test coverage reports (optional)
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.lcov
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true

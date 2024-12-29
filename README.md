@@ -1,3 +1,5 @@
+![Codecov](https://codecov.io/gh/oriventi/groq-dart-sdk/branch/main/graph/badge.svg) [![All Contributors](https://img.shields.io/github/all-contributors/oriventi/groq-dart-sdk?color=ee8449&style=flat-square)](#contributors)
+
 <a href="https://groq.com" target="_blank" rel="noopener noreferrer">
   <img
     src="https://groq.com/wp-content/uploads/2024/03/PBG-mark1-color.svg"
@@ -283,3 +285,18 @@ final chat = groq.startNewChat(GroqModels.mixtral8_7b);
 - Replace `"YOUR_GROQ_API_KEY"` with your actual Groq API key, obtained from the Groq Cloud console: https://console.groq.com/keys
 - The Groq Cloud console is your central hub for managing API keys, exploring documentation, and accessing other Groq Cloud features: https://console.groq.com/
 - Multiple choices in GroqResponses are not supported yet.
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://allcontributors.org/) specification. Contributions of any kind welcome!
