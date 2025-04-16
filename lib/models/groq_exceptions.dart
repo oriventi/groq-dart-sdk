@@ -10,7 +10,7 @@ class GroqError {
 
   factory GroqError.fromJson(Map<String, dynamic> json) => GroqError(
         message: json['error']['message'],
-        type: json['error']['type'],
+        type: json['error']['type'] ?? 'unknown_type',
       );
 
   @override
