@@ -236,6 +236,99 @@ void main() {
 
       expect(result['propertyTypes'], ['apartment', 'house', 'villa']);
     });
+
+    test('Groq Tool Required Parameter with Default - Applied When Missing', () {
+      final tool = GroqToolItem(
+        functionName: 'test_required_default',
+        functionDescription: 'A tool with required param having default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'dealType',
+            parameterDescription: 'Sale or rent',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['sale', 'rent'],
+            defaultValue: 'sale',
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Should not throw error even though required param is missing
+      final callable = tool.validateAndGetCallable({});
+      final result = callable();
+
+      expect(result['dealType'], 'sale');
+    });
+
+    test('Groq Tool Required Parameter with Default - User Value Overrides', () {
+      final tool = GroqToolItem(
+        functionName: 'test_required_default',
+        functionDescription: 'A tool with required param having default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'dealType',
+            parameterDescription: 'Sale or rent',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['sale', 'rent'],
+            defaultValue: 'sale',
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final callable = tool.validateAndGetCallable({'dealType': 'rent'});
+      final result = callable();
+
+      expect(result['dealType'], 'rent'); // User-provided value used
+    });
+
+    test('Groq Tool Required Parameter without Default - Throws Error', () {
+      final tool = GroqToolItem(
+        functionName: 'test_required_no_default',
+        functionDescription: 'A tool with required param without default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'location',
+            parameterDescription: 'Location name',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Should throw error because required param is missing and has no default
+      expect(
+        () => tool.validateAndGetCallable({}),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('Groq Tool Required Array Parameter with Default', () {
+      final tool = GroqToolItem(
+        functionName: 'test_required_array_default',
+        functionDescription: 'A tool with required array param having default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'propertyTypes',
+            parameterDescription: 'Property types',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['apartment', 'house', 'villa'],
+            defaultValue: ['apartment', 'house'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final callable = tool.validateAndGetCallable({});
+      final result = callable();
+
+      expect(result['propertyTypes'], ['apartment', 'house']);
+    });
     test('Request Chat Event', () {
       final ChatEvent event = RequestChatEvent(GroqMessage(
           content: 'Hello', isToolCall: false, role: GroqMessageRole.user));

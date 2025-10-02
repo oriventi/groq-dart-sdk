@@ -81,15 +81,15 @@ class GroqToolItem {
   ///
   /// Returns a callable function that, when invoked, executes the registered function.
   Function validateAndGetCallable(Map<String, dynamic> arguments) {
-    // Apply default values for missing optional parameters
+    // Apply default values for missing parameters (both required and optional)
     for (var param in parameters) {
-      if (!param.isRequired &&
-          !arguments.containsKey(param.parameterName) &&
+      if (!arguments.containsKey(param.parameterName) &&
           param.defaultValue != null) {
         arguments[param.parameterName] = param.defaultValue;
       }
     }
 
+    // Check for missing required parameters (after applying defaults)
     for (var param in parameters) {
       if (param.isRequired && !arguments.containsKey(param.parameterName)) {
         print(
@@ -231,8 +231,10 @@ class GroqToolParameter {
 
   /// The default value for this parameter when not provided.
   ///
-  /// Only applies to optional parameters (isRequired: false).
   /// When the AI doesn't provide this parameter, this value will be used automatically.
+  /// Works with both required and optional parameters:
+  /// - For optional parameters: provides a fallback value
+  /// - For required parameters: ensures the parameter always has a value
   /// The default value must match the parameter type and validation rules.
   final dynamic defaultValue;
 
@@ -244,7 +246,7 @@ class GroqToolParameter {
   /// [isRequired]: Whether this parameter must be provided.
   /// [allowedValues]: If provided, restricts the parameter to these values (or array elements for array types).
   /// [itemType]: Required when parameterType is array - specifies the type of array elements.
-  /// [defaultValue]: Optional default value to use when parameter is not provided (only for optional parameters).
+  /// [defaultValue]: Optional default value to use when parameter is not provided. Works for both required and optional parameters.
   GroqToolParameter({
     required this.parameterName,
     required this.parameterDescription,
@@ -259,10 +261,6 @@ class GroqToolParameter {
           'itemType must be specified when parameterType is array');
       assert(itemType != GroqToolParameterType.array,
           'itemType cannot be array (nested arrays not supported)');
-    }
-    if (defaultValue != null) {
-      assert(!isRequired,
-          'defaultValue can only be specified for optional parameters (isRequired: false)');
     }
   }
 }
