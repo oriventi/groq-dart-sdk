@@ -86,7 +86,7 @@ void main() {
       expect(result['amenities'], ['pool', 'gym']);
     });
 
-    test('Groq Tool Array Validation - Invalid Element Type', () {
+    test('Groq Tool Array Validation - Invalid Element Type Filtered', () {
       final tool = GroqToolItem(
         functionName: 'test_array_tool',
         functionDescription: 'A tool with array parameter',
@@ -99,16 +99,17 @@ void main() {
             isRequired: true,
           ),
         ],
-        function: (args) => {'result': 'success'},
+        function: (args) => args,
       );
 
-      expect(
-        () => tool.validateAndGetCallable({'counts': [1, 'invalid', 3]}),
-        throwsA(isA<ArgumentError>()),
-      );
+      // Invalid elements should be filtered out, keeping only valid ones
+      final callable = tool.validateAndGetCallable({'counts': [1, 'invalid', 3]});
+      final result = callable();
+
+      expect(result['counts'], [1, 3]);
     });
 
-    test('Groq Tool Array Validation - Invalid Allowed Value', () {
+    test('Groq Tool Array Validation - Invalid Allowed Value Filtered', () {
       final tool = GroqToolItem(
         functionName: 'test_array_tool',
         functionDescription: 'A tool with array parameter',
@@ -122,13 +123,14 @@ void main() {
             allowedValues: ['pool', 'gym', 'parking'],
           ),
         ],
-        function: (args) => {'result': 'success'},
+        function: (args) => args,
       );
 
-      expect(
-        () => tool.validateAndGetCallable({'amenities': ['pool', 'invalid']}),
-        throwsA(isA<ArgumentError>()),
-      );
+      // Invalid values should be filtered out, keeping only valid ones
+      final callable = tool.validateAndGetCallable({'amenities': ['pool', 'invalid']});
+      final result = callable();
+
+      expect(result['amenities'], ['pool']);
     });
 
     test('Groq Tool Default Value - JSON Schema', () {
@@ -328,6 +330,235 @@ void main() {
       final result = callable();
 
       expect(result['propertyTypes'], ['apartment', 'house']);
+    });
+
+    test('Groq Tool Array Auto-Wrap - Single String Value', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_autowrap',
+        functionDescription: 'A tool that auto-wraps non-array values',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Provide a single string instead of an array
+      final callable = tool.validateAndGetCallable({'tags': 'tag1'});
+      final result = callable();
+
+      expect(result['tags'], ['tag1']); // Should be auto-wrapped
+    });
+
+    test('Groq Tool Array Auto-Wrap - Single Number Value', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_autowrap_number',
+        functionDescription: 'A tool that auto-wraps non-array values',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'scores',
+            parameterDescription: 'Scores',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.number,
+            isRequired: true,
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Provide a single number instead of an array
+      final callable = tool.validateAndGetCallable({'scores': 42});
+      final result = callable();
+
+      expect(result['scores'], [42]); // Should be auto-wrapped
+    });
+
+    test('Groq Tool Array Auto-Wrap - Already Array', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_no_wrap',
+        functionDescription: 'A tool that checks arrays are not double-wrapped',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Provide an array - should not be wrapped
+      final callable = tool.validateAndGetCallable({'tags': ['tag1', 'tag2']});
+      final result = callable();
+
+      expect(result['tags'], ['tag1', 'tag2']); // Should remain as is
+    });
+
+    test('Groq Tool Array Auto-Wrap - Validates After Wrapping', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_autowrap_validate',
+        functionDescription: 'A tool that validates after auto-wrapping',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Provide invalid value - should fail validation even after wrapping
+      expect(
+        () => tool.validateAndGetCallable({'tags': 'invalid_tag'}),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('Groq Tool Array Filter - Removes Invalid Elements', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_filter',
+        functionDescription: 'A tool that filters invalid array elements',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Mix of valid and invalid values
+      final callable = tool.validateAndGetCallable({
+        'tags': ['tag1', 'invalid', 'tag2', 'bad']
+      });
+      final result = callable();
+
+      // Should keep only valid values
+      expect(result['tags'], ['tag1', 'tag2']);
+    });
+
+    test('Groq Tool Array Filter - Uses Default When All Invalid', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_filter_default',
+        functionDescription: 'A tool that uses default when all elements filtered',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+            defaultValue: ['tag1'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // All invalid values
+      final callable = tool.validateAndGetCallable({
+        'tags': ['invalid1', 'invalid2']
+      });
+      final result = callable();
+
+      // Should use default
+      expect(result['tags'], ['tag1']);
+    });
+
+    test('Groq Tool Array Filter - Throws Error When Required With No Default', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_filter_error',
+        functionDescription: 'A tool that throws error when filtered array is empty',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // All invalid values, no default, required
+      expect(
+        () => tool.validateAndGetCallable({
+          'tags': ['invalid1', 'invalid2']
+        }),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('Groq Tool Array Filter - Removes Optional Param When Empty', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_filter_optional',
+        functionDescription: 'A tool that removes optional param when filtered empty',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: false,
+            allowedValues: ['tag1', 'tag2', 'tag3'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // All invalid values, optional, no default
+      final callable = tool.validateAndGetCallable({
+        'tags': ['invalid1', 'invalid2']
+      });
+      final result = callable();
+
+      // Should not contain the parameter
+      expect(result.containsKey('tags'), false);
+    });
+
+    test('Groq Tool Array Filter - Filters Wrong Type Elements', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_filter_type',
+        functionDescription: 'A tool that filters wrong type elements',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'scores',
+            parameterDescription: 'Scores',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.number,
+            isRequired: true,
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      // Mix of numbers and strings
+      final callable = tool.validateAndGetCallable({
+        'scores': [10, 'invalid', 20, 'bad', 30]
+      });
+      final result = callable();
+
+      // Should keep only numbers
+      expect(result['scores'], [10, 20, 30]);
     });
     test('Request Chat Event', () {
       final ChatEvent event = RequestChatEvent(GroqMessage(

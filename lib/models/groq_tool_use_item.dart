@@ -122,43 +122,62 @@ class GroqToolItem {
             }
             break;
           case GroqToolParameterType.array:
+            // Auto-wrap non-array values into an array
             if (value is! List) {
-              throw ArgumentError(
-                  'Parameter ${param.parameterName} must be an Array');
+              arguments[param.parameterName] = [value];
             }
-            // Validate each element in the array
-            for (var i = 0; i < value.length; i++) {
-              final element = value[i];
-              // Validate element type
+
+            final arrayValue = arguments[param.parameterName] as List;
+
+            // Filter array to keep only valid elements
+            final filteredArray = arrayValue.where((element) {
+              // Check element type
+              bool validType = false;
               switch (param.itemType!) {
                 case GroqToolParameterType.string:
-                  if (element is! String) {
-                    throw ArgumentError(
-                        'Parameter ${param.parameterName}[$i] must be a String');
-                  }
+                  validType = element is String;
                   break;
                 case GroqToolParameterType.number:
-                  if (element is! num) {
-                    throw ArgumentError(
-                        'Parameter ${param.parameterName}[$i] must be a Number');
-                  }
+                  validType = element is num;
                   break;
                 case GroqToolParameterType.boolean:
-                  if (element is! bool) {
-                    throw ArgumentError(
-                        'Parameter ${param.parameterName}[$i] must be a Boolean');
-                  }
+                  validType = element is bool;
                   break;
                 case GroqToolParameterType.array:
-                  throw ArgumentError(
-                      'Nested arrays are not supported');
+                  return false; // Nested arrays not supported
               }
-              // Validate element against allowed values
-              if (param.allowedValues.isNotEmpty &&
-                  !param.allowedValues.contains(element.toString())) {
-                throw ArgumentError(
-                    'Parameter ${param.parameterName}[$i] must be one of ${param.allowedValues}');
+
+              if (!validType) return false;
+
+              // Check allowed values
+              if (param.allowedValues.isNotEmpty) {
+                return param.allowedValues.contains(element.toString());
               }
+
+              return true;
+            }).toList();
+
+            // Update arguments with filtered array
+            arguments[param.parameterName] = filteredArray;
+
+            // If filtered array is empty, try to use default value
+            if (filteredArray.isEmpty && param.defaultValue != null) {
+              arguments[param.parameterName] = param.defaultValue;
+            }
+
+            // If still empty and required, throw error
+            if (filteredArray.isEmpty &&
+                param.defaultValue == null &&
+                param.isRequired) {
+              throw ArgumentError(
+                  'Parameter ${param.parameterName} has no valid values and no default');
+            }
+
+            // If optional and empty with no default, remove from arguments
+            if (filteredArray.isEmpty &&
+                param.defaultValue == null &&
+                !param.isRequired) {
+              arguments.remove(param.parameterName);
             }
             break;
         }
