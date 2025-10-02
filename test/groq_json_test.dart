@@ -37,7 +37,7 @@ void main() {
       expect(json, 'array');
     });
 
-    test('Groq Tool Item with Array Parameter - JSON Schema', () {
+    test('Groq Tool Item with Array Parameter - JSON Schema with oneOf', () {
       final tool = GroqToolItem(
         functionName: 'test_array_tool',
         functionDescription: 'A tool with array parameter',
@@ -55,11 +55,21 @@ void main() {
       );
 
       final json = tool.toJson();
+      final amenitiesSchema = json['function']['parameters']['properties']['amenities'];
 
-      expect(json['function']['parameters']['properties']['amenities']['type'], 'array');
-      expect(json['function']['parameters']['properties']['amenities']['items']['type'], 'string');
-      expect(json['function']['parameters']['properties']['amenities']['items']['enum'],
-             ['pool', 'gym', 'parking', 'garden']);
+      // Should have oneOf with two options
+      expect(amenitiesSchema['oneOf'], isNotNull);
+      expect(amenitiesSchema['oneOf'].length, 2);
+
+      // First option: single string
+      expect(amenitiesSchema['oneOf'][0]['type'], 'string');
+      expect(amenitiesSchema['oneOf'][0]['enum'], ['pool', 'gym', 'parking', 'garden']);
+
+      // Second option: array of strings
+      expect(amenitiesSchema['oneOf'][1]['type'], 'array');
+      expect(amenitiesSchema['oneOf'][1]['items']['type'], 'string');
+      expect(amenitiesSchema['oneOf'][1]['items']['enum'], ['pool', 'gym', 'parking', 'garden']);
+
       expect(json['function']['parameters']['required'], ['amenities']);
     });
 

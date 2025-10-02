@@ -83,15 +83,27 @@ extension GroqToolUseExtension on GroqToolItem {
 
   Map<String, dynamic> _buildParameterSchema(GroqToolParameter parameter) {
     if (parameter.parameterType == GroqToolParameterType.array) {
-      // Build array schema with items
+      // Build schema that accepts both single value OR array
+      // This allows AI to send either "value" or ["value"]
       return {
-        'type': 'array',
+        'oneOf': [
+          // Accept single value
+          {
+            'type': parameter.itemType!.toJson(),
+            if (parameter.allowedValues.isNotEmpty)
+              'enum': parameter.allowedValues,
+          },
+          // Accept array of values
+          {
+            'type': 'array',
+            'items': {
+              'type': parameter.itemType!.toJson(),
+              if (parameter.allowedValues.isNotEmpty)
+                'enum': parameter.allowedValues,
+            },
+          },
+        ],
         'description': parameter.parameterDescription,
-        'items': {
-          'type': parameter.itemType!.toJson(),
-          if (parameter.allowedValues.isNotEmpty)
-            'enum': parameter.allowedValues,
-        },
         if (parameter.defaultValue != null)
           'default': parameter.defaultValue,
       };
