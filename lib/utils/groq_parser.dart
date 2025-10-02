@@ -69,6 +69,8 @@ class GroqParser {
         return GroqToolParameterType.number;
       case 'boolean':
         return GroqToolParameterType.boolean;
+      case 'array':
+        return GroqToolParameterType.array;
       default:
         return GroqToolParameterType.string;
     }

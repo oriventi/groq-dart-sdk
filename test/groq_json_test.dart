@@ -26,6 +26,110 @@ void main() {
 
       expect(type, newType);
     });
+
+    test('Groq Tool Parameter Type - Array', () {
+      final type = GroqToolParameterType.array;
+
+      final json = type.toJson();
+      final newType = GroqParser.groqToolParameterTypeFromString(json);
+
+      expect(type, newType);
+      expect(json, 'array');
+    });
+
+    test('Groq Tool Item with Array Parameter - JSON Schema', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_tool',
+        functionDescription: 'A tool with array parameter',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'amenities',
+            parameterDescription: 'List of required amenities',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['pool', 'gym', 'parking', 'garden'],
+          ),
+        ],
+        function: (args) => {'result': 'success'},
+      );
+
+      final json = tool.toJson();
+
+      expect(json['function']['parameters']['properties']['amenities']['type'], 'array');
+      expect(json['function']['parameters']['properties']['amenities']['items']['type'], 'string');
+      expect(json['function']['parameters']['properties']['amenities']['items']['enum'],
+             ['pool', 'gym', 'parking', 'garden']);
+      expect(json['function']['parameters']['required'], ['amenities']);
+    });
+
+    test('Groq Tool Array Validation - Valid', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_tool',
+        functionDescription: 'A tool with array parameter',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'amenities',
+            parameterDescription: 'List of required amenities',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['pool', 'gym', 'parking', 'garden'],
+          ),
+        ],
+        function: (args) => {'amenities': args['amenities']},
+      );
+
+      final callable = tool.validateAndGetCallable({'amenities': ['pool', 'gym']});
+      final result = callable();
+
+      expect(result['amenities'], ['pool', 'gym']);
+    });
+
+    test('Groq Tool Array Validation - Invalid Element Type', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_tool',
+        functionDescription: 'A tool with array parameter',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'counts',
+            parameterDescription: 'List of counts',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.number,
+            isRequired: true,
+          ),
+        ],
+        function: (args) => {'result': 'success'},
+      );
+
+      expect(
+        () => tool.validateAndGetCallable({'counts': [1, 'invalid', 3]}),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('Groq Tool Array Validation - Invalid Allowed Value', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_tool',
+        functionDescription: 'A tool with array parameter',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'amenities',
+            parameterDescription: 'List of required amenities',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['pool', 'gym', 'parking'],
+          ),
+        ],
+        function: (args) => {'result': 'success'},
+      );
+
+      expect(
+        () => tool.validateAndGetCallable({'amenities': ['pool', 'invalid']}),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
     test('Request Chat Event', () {
       final ChatEvent event = RequestChatEvent(GroqMessage(
           content: 'Hello', isToolCall: false, role: GroqMessageRole.user));

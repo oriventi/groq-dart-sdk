@@ -112,11 +112,52 @@ class GroqToolItem {
                   'Parameter ${param.parameterName} must be a Boolean');
             }
             break;
+          case GroqToolParameterType.array:
+            if (value is! List) {
+              throw ArgumentError(
+                  'Parameter ${param.parameterName} must be an Array');
+            }
+            // Validate each element in the array
+            for (var i = 0; i < value.length; i++) {
+              final element = value[i];
+              // Validate element type
+              switch (param.itemType!) {
+                case GroqToolParameterType.string:
+                  if (element is! String) {
+                    throw ArgumentError(
+                        'Parameter ${param.parameterName}[$i] must be a String');
+                  }
+                  break;
+                case GroqToolParameterType.number:
+                  if (element is! num) {
+                    throw ArgumentError(
+                        'Parameter ${param.parameterName}[$i] must be a Number');
+                  }
+                  break;
+                case GroqToolParameterType.boolean:
+                  if (element is! bool) {
+                    throw ArgumentError(
+                        'Parameter ${param.parameterName}[$i] must be a Boolean');
+                  }
+                  break;
+                case GroqToolParameterType.array:
+                  throw ArgumentError(
+                      'Nested arrays are not supported');
+              }
+              // Validate element against allowed values
+              if (param.allowedValues.isNotEmpty &&
+                  !param.allowedValues.contains(element.toString())) {
+                throw ArgumentError(
+                    'Parameter ${param.parameterName}[$i] must be one of ${param.allowedValues}');
+              }
+            }
+            break;
         }
 
-        // Validate allowed values
-        if (param.allowedValues.isNotEmpty &&
-            !param.allowedValues.contains(value)) {
+        // Validate allowed values for non-array types
+        if (param.parameterType != GroqToolParameterType.array &&
+            param.allowedValues.isNotEmpty &&
+            !param.allowedValues.contains(value.toString())) {
           throw ArgumentError(
               'Parameter ${param.parameterName} must be one of ${param.allowedValues}');
         }
@@ -143,6 +184,7 @@ enum GroqToolParameterType {
   string,
   number,
   boolean,
+  array,
 }
 
 /// Represents a parameter for a Groq tool.
@@ -168,7 +210,15 @@ class GroqToolParameter {
   /// The allowed values must matche the value's `toString()` method.
   /// If the parameter is not required, the allowed values are only enforced if the parameter is provided.
   /// For example, a "units" parameter might only accept ["metric", "imperial"].
+  /// For array types, this restricts the values of array elements.
   final List<String> allowedValues;
+
+  /// The type of elements in the array (only used when parameterType is array).
+  ///
+  /// When [parameterType] is [GroqToolParameterType.array], this field specifies
+  /// what type each element in the array should be.
+  /// For example, if you want an array of strings, set this to [GroqToolParameterType.string].
+  final GroqToolParameterType? itemType;
 
   /// Creates a new parameter definition for a Groq tool.
   ///
@@ -176,12 +226,21 @@ class GroqToolParameter {
   /// [parameterDescription]: A description of what the parameter does.
   /// [parameterType]: The type of data this parameter accepts.
   /// [isRequired]: Whether this parameter must be provided.
-  /// [allowedValues]: If provided, restricts the parameter to these values.
+  /// [allowedValues]: If provided, restricts the parameter to these values (or array elements for array types).
+  /// [itemType]: Required when parameterType is array - specifies the type of array elements.
   GroqToolParameter({
     required this.parameterName,
     required this.parameterDescription,
     required this.parameterType,
     required this.isRequired,
     this.allowedValues = const [],
-  });
+    this.itemType,
+  }) {
+    if (parameterType == GroqToolParameterType.array) {
+      assert(itemType != null,
+          'itemType must be specified when parameterType is array');
+      assert(itemType != GroqToolParameterType.array,
+          'itemType cannot be array (nested arrays not supported)');
+    }
+  }
 }

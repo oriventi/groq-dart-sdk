@@ -53,6 +53,8 @@ extension GroqToolParameterTypeExtension on GroqToolParameterType {
         return 'number';
       case GroqToolParameterType.boolean:
         return 'boolean';
+      case GroqToolParameterType.array:
+        return 'array';
     }
   }
 }
@@ -68,12 +70,7 @@ extension GroqToolUseExtension on GroqToolItem {
           'type': 'object',
           'properties': {
             for (final parameter in parameters)
-              parameter.parameterName: {
-                'type': parameter.parameterType.toJson(),
-                'description': parameter.parameterDescription,
-                if (parameter.allowedValues.isNotEmpty)
-                  'enum': parameter.allowedValues,
-              },
+              parameter.parameterName: _buildParameterSchema(parameter),
           },
           'required': parameters
               .where((parameter) => parameter.isRequired)
@@ -82,6 +79,29 @@ extension GroqToolUseExtension on GroqToolItem {
         },
       }
     };
+  }
+
+  Map<String, dynamic> _buildParameterSchema(GroqToolParameter parameter) {
+    if (parameter.parameterType == GroqToolParameterType.array) {
+      // Build array schema with items
+      return {
+        'type': 'array',
+        'description': parameter.parameterDescription,
+        'items': {
+          'type': parameter.itemType!.toJson(),
+          if (parameter.allowedValues.isNotEmpty)
+            'enum': parameter.allowedValues,
+        },
+      };
+    } else {
+      // Build primitive type schema
+      return {
+        'type': parameter.parameterType.toJson(),
+        'description': parameter.parameterDescription,
+        if (parameter.allowedValues.isNotEmpty)
+          'enum': parameter.allowedValues,
+      };
+    }
   }
 
   Map<String, dynamic> toChatJson() {
