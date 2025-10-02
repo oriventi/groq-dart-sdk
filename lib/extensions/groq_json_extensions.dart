@@ -73,7 +73,8 @@ extension GroqToolUseExtension on GroqToolItem {
               parameter.parameterName: _buildParameterSchema(parameter),
           },
           'required': parameters
-              .where((parameter) => parameter.isRequired)
+              .where((parameter) =>
+                  parameter.isRequired && parameter.defaultValue == null)
               .map((parameter) => parameter.parameterName)
               .toList(),
         },

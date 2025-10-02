@@ -273,6 +273,36 @@ void main() {
       expect(result['dealType'], 'sale');
     });
 
+    test('Groq Tool Required Parameter with Default - Not in Schema Required', () {
+      final tool = GroqToolItem(
+        functionName: 'test_required_default_schema',
+        functionDescription: 'A tool with required param having default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'location',
+            parameterDescription: 'Location name',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+          ),
+          GroqToolParameter(
+            parameterName: 'dealType',
+            parameterDescription: 'Sale or rent',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+            allowedValues: ['sale', 'rent'],
+            defaultValue: 'sale',
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final json = tool.toJson();
+
+      // location should be in required (no default)
+      // dealType should NOT be in required (has default)
+      expect(json['function']['parameters']['required'], ['location']);
+    });
+
     test('Groq Tool Required Parameter with Default - User Value Overrides', () {
       final tool = GroqToolItem(
         functionName: 'test_required_default',
