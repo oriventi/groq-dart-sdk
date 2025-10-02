@@ -90,6 +90,7 @@ class GroqParser {
                     groqToolParameterTypeFromString(item['type'] as String),
                 isRequired: item['isRequired'] as bool,
                 allowedValues: item['allowedValues'] as List<String>,
+                defaultValue: item['defaultValue'],
               ))
           .toList(),
     );

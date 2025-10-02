@@ -130,6 +130,112 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    test('Groq Tool Default Value - JSON Schema', () {
+      final tool = GroqToolItem(
+        functionName: 'test_default_tool',
+        functionDescription: 'A tool with default values',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'units',
+            parameterDescription: 'Temperature units',
+            parameterType: GroqToolParameterType.string,
+            isRequired: false,
+            allowedValues: ['celsius', 'fahrenheit'],
+            defaultValue: 'celsius',
+          ),
+          GroqToolParameter(
+            parameterName: 'tags',
+            parameterDescription: 'Default tags',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: false,
+            defaultValue: ['default', 'test'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final json = tool.toJson();
+
+      expect(json['function']['parameters']['properties']['units']['default'], 'celsius');
+      expect(json['function']['parameters']['properties']['tags']['default'], ['default', 'test']);
+    });
+
+    test('Groq Tool Default Value - Applied When Missing', () {
+      final tool = GroqToolItem(
+        functionName: 'test_default_tool',
+        functionDescription: 'A tool with default values',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'location',
+            parameterDescription: 'Location name',
+            parameterType: GroqToolParameterType.string,
+            isRequired: true,
+          ),
+          GroqToolParameter(
+            parameterName: 'units',
+            parameterDescription: 'Temperature units',
+            parameterType: GroqToolParameterType.string,
+            isRequired: false,
+            defaultValue: 'celsius',
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final callable = tool.validateAndGetCallable({'location': 'London'});
+      final result = callable();
+
+      expect(result['location'], 'London');
+      expect(result['units'], 'celsius'); // Default applied
+    });
+
+    test('Groq Tool Default Value - Not Applied When Provided', () {
+      final tool = GroqToolItem(
+        functionName: 'test_default_tool',
+        functionDescription: 'A tool with default values',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'units',
+            parameterDescription: 'Temperature units',
+            parameterType: GroqToolParameterType.string,
+            isRequired: false,
+            defaultValue: 'celsius',
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final callable = tool.validateAndGetCallable({'units': 'fahrenheit'});
+      final result = callable();
+
+      expect(result['units'], 'fahrenheit'); // Provided value used
+    });
+
+    test('Groq Tool Default Value - Array Default', () {
+      final tool = GroqToolItem(
+        functionName: 'test_array_default',
+        functionDescription: 'A tool with array default',
+        parameters: [
+          GroqToolParameter(
+            parameterName: 'propertyTypes',
+            parameterDescription: 'Property types',
+            parameterType: GroqToolParameterType.array,
+            itemType: GroqToolParameterType.string,
+            isRequired: false,
+            allowedValues: ['apartment', 'house', 'villa'],
+            defaultValue: ['apartment', 'house', 'villa'],
+          ),
+        ],
+        function: (args) => args,
+      );
+
+      final callable = tool.validateAndGetCallable({});
+      final result = callable();
+
+      expect(result['propertyTypes'], ['apartment', 'house', 'villa']);
+    });
     test('Request Chat Event', () {
       final ChatEvent event = RequestChatEvent(GroqMessage(
           content: 'Hello', isToolCall: false, role: GroqMessageRole.user));

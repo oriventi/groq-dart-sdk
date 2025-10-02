@@ -92,6 +92,8 @@ extension GroqToolUseExtension on GroqToolItem {
           if (parameter.allowedValues.isNotEmpty)
             'enum': parameter.allowedValues,
         },
+        if (parameter.defaultValue != null)
+          'default': parameter.defaultValue,
       };
     } else {
       // Build primitive type schema
@@ -100,6 +102,8 @@ extension GroqToolUseExtension on GroqToolItem {
         'description': parameter.parameterDescription,
         if (parameter.allowedValues.isNotEmpty)
           'enum': parameter.allowedValues,
+        if (parameter.defaultValue != null)
+          'default': parameter.defaultValue,
       };
     }
   }
@@ -116,6 +120,8 @@ extension GroqToolUseExtension on GroqToolItem {
           'type': parameter.parameterType.toJson(),
           'allowedValues': parameter.allowedValues,
           'isRequired': parameter.isRequired,
+          if (parameter.defaultValue != null)
+            'defaultValue': parameter.defaultValue,
         };
       }).toList(),
     };

@@ -81,6 +81,15 @@ class GroqToolItem {
   ///
   /// Returns a callable function that, when invoked, executes the registered function.
   Function validateAndGetCallable(Map<String, dynamic> arguments) {
+    // Apply default values for missing optional parameters
+    for (var param in parameters) {
+      if (!param.isRequired &&
+          !arguments.containsKey(param.parameterName) &&
+          param.defaultValue != null) {
+        arguments[param.parameterName] = param.defaultValue;
+      }
+    }
+
     for (var param in parameters) {
       if (param.isRequired && !arguments.containsKey(param.parameterName)) {
         print(
@@ -220,6 +229,13 @@ class GroqToolParameter {
   /// For example, if you want an array of strings, set this to [GroqToolParameterType.string].
   final GroqToolParameterType? itemType;
 
+  /// The default value for this parameter when not provided.
+  ///
+  /// Only applies to optional parameters (isRequired: false).
+  /// When the AI doesn't provide this parameter, this value will be used automatically.
+  /// The default value must match the parameter type and validation rules.
+  final dynamic defaultValue;
+
   /// Creates a new parameter definition for a Groq tool.
   ///
   /// [parameterName]: The name of the parameter.
@@ -228,6 +244,7 @@ class GroqToolParameter {
   /// [isRequired]: Whether this parameter must be provided.
   /// [allowedValues]: If provided, restricts the parameter to these values (or array elements for array types).
   /// [itemType]: Required when parameterType is array - specifies the type of array elements.
+  /// [defaultValue]: Optional default value to use when parameter is not provided (only for optional parameters).
   GroqToolParameter({
     required this.parameterName,
     required this.parameterDescription,
@@ -235,12 +252,17 @@ class GroqToolParameter {
     required this.isRequired,
     this.allowedValues = const [],
     this.itemType,
+    this.defaultValue,
   }) {
     if (parameterType == GroqToolParameterType.array) {
       assert(itemType != null,
           'itemType must be specified when parameterType is array');
       assert(itemType != GroqToolParameterType.array,
           'itemType cannot be array (nested arrays not supported)');
+    }
+    if (defaultValue != null) {
+      assert(!isRequired,
+          'defaultValue can only be specified for optional parameters (isRequired: false)');
     }
   }
 }
