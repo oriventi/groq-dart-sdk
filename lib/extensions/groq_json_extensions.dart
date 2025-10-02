@@ -66,16 +66,15 @@ extension GroqToolUseExtension on GroqToolItem {
         'description': functionDescription,
         'parameters': {
           'type': 'object',
-          'properties': [
-            ...parameters.map((parameter) {
-              return {
+          'properties': {
+            for (final parameter in parameters)
+              parameter.parameterName: {
                 'type': parameter.parameterType.toJson(),
                 'description': parameter.parameterDescription,
                 if (parameter.allowedValues.isNotEmpty)
                   'enum': parameter.allowedValues,
-              };
-            }),
-          ],
+              },
+          },
           'required': parameters
               .where((parameter) => parameter.isRequired)
               .map((parameter) => parameter.parameterName)
