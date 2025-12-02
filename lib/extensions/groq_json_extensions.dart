@@ -105,18 +105,15 @@ extension GroqToolUseExtension on GroqToolItem {
           },
         ],
         'description': parameter.parameterDescription,
-        if (parameter.defaultValue != null)
-          'default': parameter.defaultValue,
+        if (parameter.defaultValue != null) 'default': parameter.defaultValue,
       };
     } else {
       // Build primitive type schema
       return {
         'type': parameter.parameterType.toJson(),
         'description': parameter.parameterDescription,
-        if (parameter.allowedValues.isNotEmpty)
-          'enum': parameter.allowedValues,
-        if (parameter.defaultValue != null)
-          'default': parameter.defaultValue,
+        if (parameter.allowedValues.isNotEmpty) 'enum': parameter.allowedValues,
+        if (parameter.defaultValue != null) 'default': parameter.defaultValue,
       };
     }
   }

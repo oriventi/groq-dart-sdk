@@ -55,7 +55,8 @@ void main() {
       );
 
       final json = tool.toJson();
-      final amenitiesSchema = json['function']['parameters']['properties']['amenities'];
+      final amenitiesSchema =
+          json['function']['parameters']['properties']['amenities'];
 
       // Should have oneOf with two options
       expect(amenitiesSchema['oneOf'], isNotNull);
@@ -63,12 +64,14 @@ void main() {
 
       // First option: single string
       expect(amenitiesSchema['oneOf'][0]['type'], 'string');
-      expect(amenitiesSchema['oneOf'][0]['enum'], ['pool', 'gym', 'parking', 'garden']);
+      expect(amenitiesSchema['oneOf'][0]['enum'],
+          ['pool', 'gym', 'parking', 'garden']);
 
       // Second option: array of strings
       expect(amenitiesSchema['oneOf'][1]['type'], 'array');
       expect(amenitiesSchema['oneOf'][1]['items']['type'], 'string');
-      expect(amenitiesSchema['oneOf'][1]['items']['enum'], ['pool', 'gym', 'parking', 'garden']);
+      expect(amenitiesSchema['oneOf'][1]['items']['enum'],
+          ['pool', 'gym', 'parking', 'garden']);
 
       expect(json['function']['parameters']['required'], ['amenities']);
     });
@@ -90,7 +93,9 @@ void main() {
         function: (args) => {'amenities': args['amenities']},
       );
 
-      final callable = tool.validateAndGetCallable({'amenities': ['pool', 'gym']});
+      final callable = tool.validateAndGetCallable({
+        'amenities': ['pool', 'gym']
+      });
       final result = callable();
 
       expect(result['amenities'], ['pool', 'gym']);
@@ -113,7 +118,9 @@ void main() {
       );
 
       // Invalid elements should be filtered out, keeping only valid ones
-      final callable = tool.validateAndGetCallable({'counts': [1, 'invalid', 3]});
+      final callable = tool.validateAndGetCallable({
+        'counts': [1, 'invalid', 3]
+      });
       final result = callable();
 
       expect(result['counts'], [1, 3]);
@@ -137,7 +144,9 @@ void main() {
       );
 
       // Invalid values should be filtered out, keeping only valid ones
-      final callable = tool.validateAndGetCallable({'amenities': ['pool', 'invalid']});
+      final callable = tool.validateAndGetCallable({
+        'amenities': ['pool', 'invalid']
+      });
       final result = callable();
 
       expect(result['amenities'], ['pool']);
@@ -170,8 +179,10 @@ void main() {
 
       final json = tool.toJson();
 
-      expect(json['function']['parameters']['properties']['units']['default'], 'celsius');
-      expect(json['function']['parameters']['properties']['tags']['default'], ['default', 'test']);
+      expect(json['function']['parameters']['properties']['units']['default'],
+          'celsius');
+      expect(json['function']['parameters']['properties']['tags']['default'],
+          ['default', 'test']);
     });
 
     test('Groq Tool Default Value - Applied When Missing', () {
@@ -249,7 +260,8 @@ void main() {
       expect(result['propertyTypes'], ['apartment', 'house', 'villa']);
     });
 
-    test('Groq Tool Required Parameter with Default - Applied When Missing', () {
+    test('Groq Tool Required Parameter with Default - Applied When Missing',
+        () {
       final tool = GroqToolItem(
         functionName: 'test_required_default',
         functionDescription: 'A tool with required param having default',
@@ -273,7 +285,8 @@ void main() {
       expect(result['dealType'], 'sale');
     });
 
-    test('Groq Tool Required Parameter with Default - Not in Schema Required', () {
+    test('Groq Tool Required Parameter with Default - Not in Schema Required',
+        () {
       final tool = GroqToolItem(
         functionName: 'test_required_default_schema',
         functionDescription: 'A tool with required param having default',
@@ -303,7 +316,8 @@ void main() {
       expect(json['function']['parameters']['required'], ['location']);
     });
 
-    test('Groq Tool Required Parameter with Default - User Value Overrides', () {
+    test('Groq Tool Required Parameter with Default - User Value Overrides',
+        () {
       final tool = GroqToolItem(
         functionName: 'test_required_default',
         functionDescription: 'A tool with required param having default',
@@ -437,7 +451,9 @@ void main() {
       );
 
       // Provide an array - should not be wrapped
-      final callable = tool.validateAndGetCallable({'tags': ['tag1', 'tag2']});
+      final callable = tool.validateAndGetCallable({
+        'tags': ['tag1', 'tag2']
+      });
       final result = callable();
 
       expect(result['tags'], ['tag1', 'tag2']); // Should remain as is
@@ -497,7 +513,8 @@ void main() {
     test('Groq Tool Array Filter - Uses Default When All Invalid', () {
       final tool = GroqToolItem(
         functionName: 'test_array_filter_default',
-        functionDescription: 'A tool that uses default when all elements filtered',
+        functionDescription:
+            'A tool that uses default when all elements filtered',
         parameters: [
           GroqToolParameter(
             parameterName: 'tags',
@@ -522,10 +539,12 @@ void main() {
       expect(result['tags'], ['tag1']);
     });
 
-    test('Groq Tool Array Filter - Throws Error When Required With No Default', () {
+    test('Groq Tool Array Filter - Throws Error When Required With No Default',
+        () {
       final tool = GroqToolItem(
         functionName: 'test_array_filter_error',
-        functionDescription: 'A tool that throws error when filtered array is empty',
+        functionDescription:
+            'A tool that throws error when filtered array is empty',
         parameters: [
           GroqToolParameter(
             parameterName: 'tags',
@@ -551,7 +570,8 @@ void main() {
     test('Groq Tool Array Filter - Removes Optional Param When Empty', () {
       final tool = GroqToolItem(
         functionName: 'test_array_filter_optional',
-        functionDescription: 'A tool that removes optional param when filtered empty',
+        functionDescription:
+            'A tool that removes optional param when filtered empty',
         parameters: [
           GroqToolParameter(
             parameterName: 'tags',

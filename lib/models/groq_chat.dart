@@ -138,6 +138,7 @@ class GroqChatSettings {
 class GroqChat {
   late String _model;
   late String _apiKey;
+  late String _baseUrl;
 
   @Deprecated("GroqConversationItem is deprecated, use GroqChatItem instead")
   final List<GroqConversationItem> _conversationItems = [];
@@ -152,7 +153,10 @@ class GroqChat {
   ///[model] the model id
   ///[apiKey] the api key
   ///[settings] the chat settings
-  GroqChat(this._model, this._apiKey, this._settings);
+  ///[baseUrl] the base URL for the Groq API (optional, defaults to 'https://api.groq.com/openai/v1')
+  GroqChat(this._model, this._apiKey, this._settings, [String? baseUrl]) {
+    _baseUrl = baseUrl ?? GroqApi.defaultBaseUrl;
+  }
 
   ///Closes the stream
   void dispose() {
@@ -447,6 +451,7 @@ class GroqChat {
         apiKey: _apiKey,
         chat: this,
         expectJSON: expectJSON,
+        baseUrl: _baseUrl,
       );
     } catch (e) {
       _streamController.addError(e);
@@ -468,6 +473,7 @@ class GroqChat {
     return {
       'model': _model,
       'apiKey': _apiKey,
+      'baseUrl': _baseUrl,
       'settings': _settings.toJson(),
       'chatItems': _chatItems.map((e) => e.toJson()).toList(),
       'rateLimitInfo': _rateLimitInfo?.toJson(),
@@ -494,6 +500,7 @@ class GroqChat {
       Function(Map<String, dynamic>) Function(String) functionNameToFunction) {
     _model = json['model'] as String;
     _apiKey = json['apiKey'] as String;
+    _baseUrl = json['baseUrl'] as String? ?? GroqApi.defaultBaseUrl;
     _settings = GroqParser.settignsFromJson(json['settings']);
     _chatItems = (json['chatItems'] as List<dynamic>)
         .map((item) =>

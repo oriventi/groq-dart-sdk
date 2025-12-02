@@ -1,7 +1,14 @@
 import 'package:groq_sdk/groq_sdk.dart';
 
 void main(List<String> arguments) async {
+  // Create a Groq instance with default base URL
   final groq = Groq('YOUR_API_KEY');
+
+  // Or use a custom base URL
+  // final groq = Groq('YOUR_API_KEY', 'https://custom.api.com/openai/v1');
+
+  // Or without API key if backend handles authentication
+  // final groq = Groq(null, 'https://your-backend.com/api/v1');
 
   //Checking model availability
   if (!await groq.canUseModel(GroqModels.llama3_8b)) {

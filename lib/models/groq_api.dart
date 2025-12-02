@@ -14,19 +14,24 @@ import 'package:groq_sdk/utils/groq_parser.dart';
 import 'package:http/http.dart' as http;
 
 class GroqApi {
-  static const String _chatCompletionUrl =
-      'https://api.groq.com/openai/v1/chat/completions';
-  static const String _getModelBaseUrl =
-      'https://api.groq.com/openai/v1/models';
-  static const String _getAudioTranscriptionUrl =
-      'https://api.groq.com/openai/v1/audio/transcriptions';
-  static const String _getAudioTranslationUrl =
-      'https://api.groq.com/openai/v1/audio/translations';
+  static const String defaultBaseUrl = 'https://api.groq.com/openai/v1';
+
+  static String _chatCompletionUrl(String baseUrl) =>
+      '$baseUrl/chat/completions';
+  static String _getModelBaseUrl(String baseUrl) => '$baseUrl/models';
+  static String _getAudioTranscriptionUrl(String baseUrl) =>
+      '$baseUrl/audio/transcriptions';
+  static String _getAudioTranslationUrl(String baseUrl) =>
+      '$baseUrl/audio/translations';
 
   ///Returns the model metadata from groq with the given model id
-  static Future<GroqLLMModel> getModel(String modelId, String apiKey) async {
-    final response =
-        await AuthHttp.get(url: '$_getModelBaseUrl/$modelId', apiKey: apiKey);
+  static Future<GroqLLMModel> getModel(
+    String modelId,
+    String apiKey, {
+    String baseUrl = defaultBaseUrl,
+  }) async {
+    final response = await AuthHttp.get(
+        url: '${_getModelBaseUrl(baseUrl)}/$modelId', apiKey: apiKey);
     if (response.statusCode == 200) {
       return GroqParser.llmModelFromJson(
           json.decode(utf8.decode(response.bodyBytes, allowMalformed: true)));
@@ -36,8 +41,12 @@ class GroqApi {
   }
 
   ///Returns a list of all model metadatas available in Groq
-  static Future<List<GroqLLMModel>> listModels(String apiKey) async {
-    final response = await AuthHttp.get(url: _getModelBaseUrl, apiKey: apiKey);
+  static Future<List<GroqLLMModel>> listModels(
+    String apiKey, {
+    String baseUrl = defaultBaseUrl,
+  }) async {
+    final response =
+        await AuthHttp.get(url: _getModelBaseUrl(baseUrl), apiKey: apiKey);
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData =
           json.decode(utf8.decode(response.bodyBytes, allowMalformed: true));
@@ -54,6 +63,7 @@ class GroqApi {
     required String apiKey,
     required GroqChat chat,
     required bool expectJSON,
+    String baseUrl = defaultBaseUrl,
   }) async {
     final Map<String, dynamic> jsonMap = {};
     List<Map<String, dynamic>> messages = [];
@@ -81,7 +91,7 @@ class GroqApi {
     }
     jsonMap.addAll(chat.settings.toJson());
     final response = await AuthHttp.post(
-        url: _chatCompletionUrl, apiKey: apiKey, body: jsonMap);
+        url: _chatCompletionUrl(baseUrl), apiKey: apiKey, body: jsonMap);
     //Rate Limit information
     final rateLimitInfo =
         GroqParser.rateLimitInformationFromHeaders(response.headers);
@@ -110,9 +120,10 @@ class GroqApi {
     required String filePath,
     required String modelId,
     required Map<String, String> optionalParameters,
+    String baseUrl = defaultBaseUrl,
   }) async {
-    final request =
-        http.MultipartRequest('POST', Uri.parse(_getAudioTranscriptionUrl));
+    final request = http.MultipartRequest(
+        'POST', Uri.parse(_getAudioTranscriptionUrl(baseUrl)));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
     request.headers['Content-Type'] = 'multipart/form-data';
@@ -147,9 +158,10 @@ class GroqApi {
     required String filePath,
     required String modelId,
     required double temperature,
+    String baseUrl = defaultBaseUrl,
   }) async {
-    var request =
-        http.MultipartRequest('POST', Uri.parse(_getAudioTranslationUrl));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse(_getAudioTranslationUrl(baseUrl)));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
     request.headers['Content-Type'] = 'multipart/form-data';

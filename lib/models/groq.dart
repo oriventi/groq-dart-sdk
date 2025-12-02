@@ -6,11 +6,18 @@ import 'package:groq_sdk/utils/groq_parser.dart';
 class Groq {
   ///The API key to use the Groq API \
   ///Obtain it from the Groq website: \
-  ///https://console.groq.com/keys
-  String apiKey;
+  ///https://console.groq.com/keys \
+  ///Can be null if your backend handles authentication
+  String? apiKey;
+
+  ///The base URL for the Groq API \
+  ///Defaults to 'https://api.groq.com/openai/v1' \
+  ///Can be customized to use a different endpoint
+  String baseUrl;
 
   ///Creates a new Groq instance \
-  ///[apiKey] is the API key to use the Groq API \
+  ///[apiKey] is the API key to use the Groq API (optional if backend handles auth) \
+  ///[baseUrl] is the base URL for the Groq API (optional, defaults to 'https://api.groq.com/openai/v1') \
   ///You can communicate with the Groq API via a Chat instance \
   ///Example:
   ///```dart
@@ -18,16 +25,25 @@ class Groq {
   ///final chat = groq.startNewChat(llama3_8b); //use a model id, provided by Groq
   ///final (response, resourceUsage) = await chat.sendMessage('YOUR_MESSAGE');
   ///```
-  Groq(this.apiKey);
+  ///Or with a custom base URL:
+  ///```dart
+  ///final groq = Groq('EXAMPLE_API_KEY', baseUrl: 'https://custom.api.com/v1');
+  ///```
+  ///Or without API key (if backend handles auth):
+  ///```dart
+  ///final groq = Groq(null, baseUrl: 'https://your-backend.com/api/v1');
+  ///```
+  Groq([this.apiKey, String? baseUrl])
+      : baseUrl = baseUrl ?? GroqApi.defaultBaseUrl;
 
   ///Returns the model metadata from groq with the given model id \
   Future<GroqLLMModel> getModel(String modelId) async {
-    return await GroqApi.getModel(modelId, apiKey);
+    return await GroqApi.getModel(modelId, apiKey ?? '', baseUrl: baseUrl);
   }
 
   ///Returns a list of all model metadatas available in Groq \
   Future<List<GroqLLMModel>> listModels() async {
-    return await GroqApi.listModels(apiKey);
+    return await GroqApi.listModels(apiKey ?? '', baseUrl: baseUrl);
   }
 
   ///Returns whether the model with the given model id can be used \
@@ -51,6 +67,7 @@ class Groq {
   ///`modelId` is the model id to use for the chat \
   ///`settings` are the chat settings, defaults to GroqChatSettings.defaults() \
   ///`customApiKey` is the API key to use for the chat, defaults to the Groq instance API key \
+  ///`customBaseUrl` is the base URL to use for the chat, defaults to the Groq instance base URL \
   ///Example:
   ///```dart
   /// final chat = groq.startNewChat(llama3_8b);
@@ -71,14 +88,17 @@ class Groq {
     String modelId, {
     GroqChatSettings settings = const GroqChatSettings.defaults(),
     String? customApiKey,
+    String? customBaseUrl,
   }) {
-    final specificApiKey = customApiKey ?? apiKey;
-    return GroqChat(modelId, specificApiKey, settings);
+    final specificApiKey = customApiKey ?? apiKey ?? '';
+    final specificBaseUrl = customBaseUrl ?? baseUrl;
+    return GroqChat(modelId, specificApiKey, settings, specificBaseUrl);
   }
 
   ///Transcribes the audio file at the given `audioFileUrl`, max 25Mb \
   ///It uses the model with the given `modelId` \
   ///`customApiKey` is the API key to use for the transcription, defaults to the Groq instance API key \
+  ///`customBaseUrl` is the base URL to use for the transcription, defaults to the Groq instance base URL \
   ///Returns the transcribed audio response, the usage of the groq resources and the rate limit information \
   ///Example:
   ///```dart
@@ -93,20 +113,24 @@ class Groq {
     required String audioFileUrl,
     required String modelId,
     String? customApiKey,
+    String? customBaseUrl,
     Map<String, String> optionalParameters = const {},
   }) async {
-    final specificApiKey = customApiKey ?? apiKey;
+    final specificApiKey = customApiKey ?? apiKey ?? '';
+    final specificBaseUrl = customBaseUrl ?? baseUrl;
     return await GroqApi.transcribeAudio(
       filePath: audioFileUrl,
       modelId: modelId,
       apiKey: specificApiKey,
       optionalParameters: optionalParameters,
+      baseUrl: specificBaseUrl,
     );
   }
 
   ///Translates the audio file at the given `audioFileUrl` to ENGLISH, max 25Mb \
   ///It uses the model with the given `modelId` \
   ///`customApiKey` is the API key to use for the translation, defaults to the Groq instance API key \
+  ///`customBaseUrl` is the base URL to use for the translation, defaults to the Groq instance base URL \
   ///`temperature` is the randomness of the translation, defaults to 0.5 \
   ///Returns the translated audio response, the usage of the groq resources and the rate limit information \
   ///Example:
@@ -123,19 +147,23 @@ class Groq {
     required String audioFileUrl,
     required String modelId,
     String? customApiKey,
+    String? customBaseUrl,
     double temperature = 0.5,
   }) async {
-    final specificApiKey = customApiKey ?? apiKey;
+    final specificApiKey = customApiKey ?? apiKey ?? '';
+    final specificBaseUrl = customBaseUrl ?? baseUrl;
     return await GroqApi.translateAudio(
       filePath: audioFileUrl,
       modelId: modelId,
       apiKey: specificApiKey,
       temperature: temperature,
+      baseUrl: specificBaseUrl,
     );
   }
 
   ///Checks if the given `text` is harmful \
   ///`customApiKey` is the API key to use for the check, defaults to the Groq instance API key \
+  ///`customBaseUrl` is the base URL to use for the check, defaults to the Groq instance base URL \
   ///Returns whether the text is harmful, the harmful category and the rate limit information \
   ///Example:
   ///```dart
@@ -148,10 +176,12 @@ class Groq {
       isTextHarmful({
     required String text,
     String? customApiKey,
+    String? customBaseUrl,
   }) async {
-    final specificApiKey = customApiKey ?? apiKey;
+    final specificApiKey = customApiKey ?? apiKey ?? '';
+    final specificBaseUrl = customBaseUrl ?? baseUrl;
     final chat = GroqChat(GroqModels.llama_guard_3_8b, specificApiKey,
-        GroqChatSettings.defaults());
+        GroqChatSettings.defaults(), specificBaseUrl);
     final (response, usage) = await chat.sendMessage(text);
     final answerString = response.choices.first.message;
     bool isHarmful = false;
