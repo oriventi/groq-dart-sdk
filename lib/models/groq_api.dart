@@ -126,7 +126,6 @@ class GroqApi {
         'POST', Uri.parse(_getAudioTranscriptionUrl(baseUrl)));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
-    request.headers['Content-Type'] = 'multipart/form-data';
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
     request.fields['model'] = modelId;
 
@@ -164,7 +163,6 @@ class GroqApi {
         'POST', Uri.parse(_getAudioTranslationUrl(baseUrl)));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
-    request.headers['Content-Type'] = 'multipart/form-data';
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
     request.fields['model'] = modelId;
     request.fields['temperature'] = temperature.toString();
